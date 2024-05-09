@@ -50,6 +50,7 @@ app.MapGet("/me", async (ClaimsPrincipal claims, ApplicationDbContext db) =>
 app.UseHttpsRedirection();
 
 app.MapIdentityApi<User>();
+app.MapControllers();
 
 app.UseAuthorization();
 
