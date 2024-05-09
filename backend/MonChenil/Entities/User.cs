@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Identity;
-using MonChenil.Entities.Pets;
 
 namespace MonChenil.Entities;
 

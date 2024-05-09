@@ -5,7 +5,7 @@
 namespace MonChenil.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddPets : Migration
+    public partial class AddPet : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

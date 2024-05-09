@@ -1,4 +1,4 @@
-namespace MonChenil.Entities.Pets;
+namespace MonChenil.Entities;
 
 public enum PetType
 {
@@ -6,10 +6,10 @@ public enum PetType
     Dog,
 }
 
-public abstract class Pet
+public class Pet
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
-    public abstract PetType Type { get; set; }
+    public PetType Type { get; set; }
     public User? Owner { get; set; }
 }

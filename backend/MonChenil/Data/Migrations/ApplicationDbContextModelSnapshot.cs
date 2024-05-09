@@ -149,7 +149,7 @@ namespace MonChenil.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("MonChenil.Entities.Pets.Pet", b =>
+            modelBuilder.Entity("MonChenil.Entities.Pet", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -170,10 +170,6 @@ namespace MonChenil.Data.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("Pets");
-
-                    b.HasDiscriminator<int>("Type");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("MonChenil.Entities.User", b =>
@@ -240,20 +236,6 @@ namespace MonChenil.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("MonChenil.Entities.Pets.Cat", b =>
-                {
-                    b.HasBaseType("MonChenil.Entities.Pets.Pet");
-
-                    b.HasDiscriminator().HasValue(0);
-                });
-
-            modelBuilder.Entity("MonChenil.Entities.Pets.Dog", b =>
-                {
-                    b.HasBaseType("MonChenil.Entities.Pets.Pet");
-
-                    b.HasDiscriminator().HasValue(1);
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -305,7 +287,7 @@ namespace MonChenil.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MonChenil.Entities.Pets.Pet", b =>
+            modelBuilder.Entity("MonChenil.Entities.Pet", b =>
                 {
                     b.HasOne("MonChenil.Entities.User", "Owner")
                         .WithMany("Pets")
