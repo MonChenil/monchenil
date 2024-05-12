@@ -19,6 +19,14 @@ export class AuthService {
     { validators: this.passwordMatchValidator }
   );
 
+  public loginForm: FormGroup = this._formBuilder.group(
+    {
+      email: ['', [Validators.required]],
+      password: ['', [Validators.required]],
+    },
+    { validators: this.passwordMatchValidator }
+  );
+
   constructor(private _formBuilder: FormBuilder) {}
 
   public passwordMatchValidator(control: AbstractControl): void {

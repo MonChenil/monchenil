@@ -9,13 +9,17 @@ import { AuthService } from '../../../services/auth.service';
 export class RegisterComponent {
   constructor(public authService: AuthService) {}
 
+  public resetForm(): void {
+    this.authService.registerForm.reset();
+  }
+
   public onSubmit(): void {
     console.log(this.authService.registerForm.value);
   }
 
-  getErrorMessage(fieldName: string): string | null {
+  public getErrorMessage(fieldName: string): string | null {
     const field = this.authService.registerForm.get(fieldName);
-    
+
     if (!field || !field.errors || !field.touched || !field.dirty) {
       return null;
     }
