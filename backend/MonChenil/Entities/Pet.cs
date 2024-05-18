@@ -12,4 +12,5 @@ public class Pet
     public string Name { get; set; } = string.Empty;
     public PetType Type { get; set; }
     public User? Owner { get; set; }
+    public List<TimeSlot> TimeSlots { get; set; } = [];
 }

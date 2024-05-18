@@ -6,11 +6,11 @@ namespace MonChenil.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class PetsController : ControllerBase
+public class TimeSlotsController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
 
-    public PetsController(ApplicationDbContext context)
+    public TimeSlotsController(ApplicationDbContext context)
     {
         _context = context;
     }
@@ -18,38 +18,38 @@ public class PetsController : ControllerBase
     [HttpGet]
     public IActionResult Get()
     {
-        return Ok(_context.Pets.ToList());
+        return Ok(_context.TimeSlots.ToList());
     }
 
     [HttpGet("{id}")]
     public IActionResult Get(int id)
     {
-        var pet = _context.Pets.Find(id);
-        if (pet == null)
+        var timeSlot = _context.TimeSlots.Find(id);
+        if (timeSlot == null)
         {
             return NotFound();
         }
 
-        return Ok(pet);
+        return Ok(timeSlot);
     }
 
     [HttpPost]
-    public IActionResult Post(Pet pet)
+    public IActionResult Post(TimeSlot timeSlot)
     {
-        _context.Pets.Add(pet);
+        _context.TimeSlots.Add(timeSlot);
         _context.SaveChanges();
-        return CreatedAtAction(nameof(Get), new { id = pet.Id }, pet);
+        return CreatedAtAction(nameof(Get), new { id = timeSlot.Id }, timeSlot);
     }
 
     [HttpPut()]
-    public IActionResult Put(Pet pet)
+    public IActionResult Put(TimeSlot timeSlot)
     {
-        if (!_context.Pets.Any(p => p.Id == pet.Id))
+        if (!_context.TimeSlots.Any(p => p.Id == timeSlot.Id))
         {
             return NotFound();
         }
 
-        _context.Pets.Update(pet);
+        _context.TimeSlots.Update(timeSlot);
         _context.SaveChanges();
         return Ok();
     }
@@ -57,13 +57,13 @@ public class PetsController : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        var pet = _context.Pets.Find(id);
-        if (pet == null)
+        var timeSlot = _context.TimeSlots.Find(id);
+        if (timeSlot == null)
         {
             return NotFound();
         }
 
-        _context.Pets.Remove(pet);
+        _context.TimeSlots.Remove(timeSlot);
         _context.SaveChanges();
         return Ok();
     }
