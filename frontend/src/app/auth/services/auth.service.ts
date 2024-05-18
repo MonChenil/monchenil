@@ -7,6 +7,10 @@ import { environment } from '../../../environments/environment';
 export class AuthService {
   constructor(private http: HttpClient) {}
 
+  isAuthenticated(): Observable<any> {
+    return this.http.get(environment.backendIsAuthenticated);
+  }
+
   login(data: any): Observable<any> {
     return this.http.post(environment.backendLogin, data);
   }

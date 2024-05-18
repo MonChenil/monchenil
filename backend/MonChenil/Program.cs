@@ -46,6 +46,12 @@ app.MapGet("/me", async (ClaimsPrincipal claims, ApplicationDbContext db) =>
     return Results.Ok(user);
 }).RequireAuthorization();
 
+// Route to check if the user is authenticated
+app.MapGet("/is-authenticated", (ClaimsPrincipal claims) =>
+{
+    return claims.Identity?.IsAuthenticated == true;
+});
+
 app.UseHttpsRedirection();
 
 app.MapIdentityApi<IdentityUser>();
