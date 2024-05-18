@@ -1,10 +1,6 @@
 import { Injectable } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { passwordMatchValidator } from '../validators/password-match.validator';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +12,7 @@ export class AuthService {
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
     },
-    { validators: this.passwordMatchValidator }
+    { validators: passwordMatchValidator },
   );
 
   public loginForm: FormGroup = this._formBuilder.group(
@@ -24,15 +20,8 @@ export class AuthService {
       email: ['', [Validators.required]],
       password: ['', [Validators.required]],
     },
-    { validators: this.passwordMatchValidator }
+    { validators: passwordMatchValidator },
   );
 
   constructor(private _formBuilder: FormBuilder) {}
-
-  public passwordMatchValidator(control: AbstractControl): void {
-    return control.get('password')?.value ===
-      control.get('confirmPassword')?.value
-      ? control.get('confirmPassword')?.setErrors(null)
-      : control.get('confirmPassword')?.setErrors({ passwordMismatch: true });
-  }
 }
