@@ -5,7 +5,7 @@ using MonChenil.Repositories;
 namespace MonChenil.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class PetsController : ControllerBase
 {
     private readonly IRepository<Pet> repository;

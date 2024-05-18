@@ -19,6 +19,7 @@ builder.Services.AddDefaultIdentity<User>()
     .AddApiEndpoints();
 
 builder.Services.AddScoped<IRepository<Pet>, EntityFrameworkRepository<Pet>>();
+builder.Services.AddScoped<IRepository<TimeSlot>, EntityFrameworkRepository<TimeSlot>>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

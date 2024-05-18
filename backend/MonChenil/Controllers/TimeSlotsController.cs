@@ -1,30 +1,30 @@
 using Microsoft.AspNetCore.Mvc;
-using MonChenil.Data;
 using MonChenil.Entities;
+using MonChenil.Repositories;
 
 namespace MonChenil.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class TimeSlotsController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IRepository<TimeSlot> repository;
 
-    public TimeSlotsController(ApplicationDbContext context)
+    public TimeSlotsController(IRepository<TimeSlot> repository)
     {
-        _context = context;
+        this.repository = repository;
     }
 
     [HttpGet]
     public IActionResult Get()
     {
-        return Ok(_context.TimeSlots.ToList());
+        return Ok(repository.GetAll());
     }
 
     [HttpGet("{id}")]
     public IActionResult Get(int id)
     {
-        var timeSlot = _context.TimeSlots.Find(id);
+        var timeSlot = repository.GetById(id);
         if (timeSlot == null)
         {
             return NotFound();
@@ -36,35 +36,32 @@ public class TimeSlotsController : ControllerBase
     [HttpPost]
     public IActionResult Post(TimeSlot timeSlot)
     {
-        _context.TimeSlots.Add(timeSlot);
-        _context.SaveChanges();
+        repository.Add(timeSlot);
         return CreatedAtAction(nameof(Get), new { id = timeSlot.Id }, timeSlot);
     }
 
     [HttpPut()]
     public IActionResult Put(TimeSlot timeSlot)
     {
-        if (!_context.TimeSlots.Any(p => p.Id == timeSlot.Id))
+        if (!repository.Exists(t => t.Id == timeSlot.Id))
         {
             return NotFound();
         }
 
-        _context.TimeSlots.Update(timeSlot);
-        _context.SaveChanges();
+        repository.Update(timeSlot);
         return Ok();
     }
 
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        var timeSlot = _context.TimeSlots.Find(id);
+        var timeSlot = repository.GetById(id);
         if (timeSlot == null)
         {
             return NotFound();
         }
 
-        _context.TimeSlots.Remove(timeSlot);
-        _context.SaveChanges();
+        repository.Delete(timeSlot);
         return Ok();
     }
 }
