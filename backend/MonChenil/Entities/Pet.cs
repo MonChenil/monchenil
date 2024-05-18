@@ -6,7 +6,7 @@ public enum PetType
     Dog,
 }
 
-public class Pet
+public class Pet : IEntity
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;

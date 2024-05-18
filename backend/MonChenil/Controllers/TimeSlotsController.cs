@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MonChenil.Entities;
-using MonChenil.Repositories;
+using MonChenil.Services;
 
 namespace MonChenil.Controllers;
 
@@ -8,23 +8,23 @@ namespace MonChenil.Controllers;
 [Route("[controller]")]
 public class TimeSlotsController : ControllerBase
 {
-    private readonly IRepository<TimeSlot> repository;
+    private readonly TimeSlotService timeSlotService;
 
-    public TimeSlotsController(IRepository<TimeSlot> repository)
+    public TimeSlotsController(TimeSlotService timeSlotService)
     {
-        this.repository = repository;
+        this.timeSlotService = timeSlotService;
     }
 
     [HttpGet]
     public IActionResult Get()
     {
-        return Ok(repository.GetAll());
+        return Ok(timeSlotService.GetAll());
     }
 
     [HttpGet("{id}")]
     public IActionResult Get(int id)
     {
-        var timeSlot = repository.GetById(id);
+        var timeSlot = timeSlotService.GetById(id);
         if (timeSlot == null)
         {
             return NotFound();
@@ -36,32 +36,40 @@ public class TimeSlotsController : ControllerBase
     [HttpPost]
     public IActionResult Post(TimeSlot timeSlot)
     {
-        repository.Add(timeSlot);
+        try
+        {
+            timeSlotService.Add(timeSlot);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
+        }
+
         return CreatedAtAction(nameof(Get), new { id = timeSlot.Id }, timeSlot);
     }
 
     [HttpPut()]
     public IActionResult Put(TimeSlot timeSlot)
     {
-        if (!repository.Exists(t => t.Id == timeSlot.Id))
+        if (!timeSlotService.Exists(t => t.Id == timeSlot.Id))
         {
             return NotFound();
         }
 
-        repository.Update(timeSlot);
+        timeSlotService.Update(timeSlot);
         return Ok();
     }
 
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        var timeSlot = repository.GetById(id);
+        var timeSlot = timeSlotService.GetById(id);
         if (timeSlot == null)
         {
             return NotFound();
         }
 
-        repository.Delete(timeSlot);
+        timeSlotService.Delete(timeSlot);
         return Ok();
     }
 }

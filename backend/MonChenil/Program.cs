@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MonChenil.Data;
 using MonChenil.Entities;
 using MonChenil.Repositories;
+using MonChenil.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,7 @@ builder.Services.AddDefaultIdentity<User>()
 
 builder.Services.AddScoped<IRepository<Pet>, EntityFrameworkRepository<Pet>>();
 builder.Services.AddScoped<IRepository<TimeSlot>, EntityFrameworkRepository<TimeSlot>>();
+builder.Services.AddScoped<TimeSlotService>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
