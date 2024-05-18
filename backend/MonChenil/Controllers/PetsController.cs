@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using MonChenil.Data;
 using MonChenil.Entities;
+using MonChenil.Repositories;
 
 namespace MonChenil.Controllers;
 
@@ -8,23 +8,23 @@ namespace MonChenil.Controllers;
 [Route("api/[controller]")]
 public class PetsController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
+    private readonly IRepository<Pet> repository;
 
-    public PetsController(ApplicationDbContext context)
+    public PetsController(IRepository<Pet> repository)
     {
-        _context = context;
+        this.repository = repository;
     }
 
     [HttpGet]
     public IActionResult Get()
     {
-        return Ok(_context.Pets.ToList());
+        return Ok(repository.GetAll());
     }
 
     [HttpGet("{id}")]
     public IActionResult Get(int id)
     {
-        var pet = _context.Pets.Find(id);
+        var pet = repository.GetById(id);
         if (pet == null)
         {
             return NotFound();
@@ -36,35 +36,32 @@ public class PetsController : ControllerBase
     [HttpPost]
     public IActionResult Post(Pet pet)
     {
-        _context.Pets.Add(pet);
-        _context.SaveChanges();
+        repository.Add(pet);
         return CreatedAtAction(nameof(Get), new { id = pet.Id }, pet);
     }
 
     [HttpPut()]
     public IActionResult Put(Pet pet)
     {
-        if (!_context.Pets.Any(p => p.Id == pet.Id))
+        if (!repository.Exists(p => p.Id == pet.Id))
         {
             return NotFound();
         }
 
-        _context.Pets.Update(pet);
-        _context.SaveChanges();
+        repository.Update(pet);
         return Ok();
     }
 
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        var pet = _context.Pets.Find(id);
+        var pet = repository.GetById(id);
         if (pet == null)
         {
             return NotFound();
         }
 
-        _context.Pets.Remove(pet);
-        _context.SaveChanges();
+        repository.Delete(pet);
         return Ok();
     }
 }
