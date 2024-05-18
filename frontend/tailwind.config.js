@@ -7,6 +7,7 @@ module.exports = {
       {
         monchenil: {
           primary: "#00bd70",
+          "primary-content": "#ffffff",
           secondary: "#00ABFF",
           accent: "#FF6254",
           neutral: "#2b3440",

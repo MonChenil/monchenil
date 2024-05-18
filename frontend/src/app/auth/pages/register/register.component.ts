@@ -1,32 +1,57 @@
 import { Component } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { passwordMatchValidator } from '../../validators/password-match.validator';
 
 @Component({
-  selector: 'app-register',
+  selector: 'auth-register',
   templateUrl: './register.component.html',
 })
 export class RegisterPageComponent {
-  constructor(public authService: AuthService) {}
+  constructor(
+    private formBuilder: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
+  ) {}
 
-  public resetForm(): void {
-    this.authService.registerForm.reset();
-  }
+  registerForm = this.formBuilder.group(
+    {
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required]],
+    },
+    {
+      validators: passwordMatchValidator,
+    },
+  );
 
   public onSubmit(): void {
-    console.log(this.authService.registerForm.value);
+    if (this.registerForm.invalid) {
+      return;
+    }
+
+    this.authService.register(this.registerForm.value).subscribe({
+      next: () => {
+        this.router.navigate(['/auth/login']);
+      },
+      error: (error) => {
+        this.registerForm.setErrors({ invalidRegister: true });
+      },
+    });
   }
 
   public getErrorMessage(fieldName: string): string | null {
-    const field = this.authService.registerForm.get(fieldName);
+    const field = fieldName
+      ? this.registerForm.get(fieldName)
+      : this.registerForm;
 
     if (!field || !field.errors || !field.touched || !field.dirty) {
       return null;
     }
 
     if (field.errors['required']) {
-      return fieldName == 'email'
-        ? `L'email est obligatoire`
-        : `Le mot de passe est obligatoire`;
+      return 'Ce champ est obligatoire';
     }
 
     if (field.errors['email']) {
@@ -39,6 +64,10 @@ export class RegisterPageComponent {
 
     if (field.errors['passwordMismatch']) {
       return `Les mots de passe ne correspondent pas`;
+    }
+
+    if (field.errors['invalidRegister']) {
+      return "Une erreur est survenue lors de l'inscription";
     }
 
     return null;

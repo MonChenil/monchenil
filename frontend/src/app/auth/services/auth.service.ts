@@ -1,27 +1,17 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { passwordMatchValidator } from '../validators/password-match.validator';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class AuthService {
-  public registerForm: FormGroup = this._formBuilder.group(
-    {
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', [Validators.required]],
-    },
-    { validators: passwordMatchValidator },
-  );
+  constructor(private http: HttpClient) {}
 
-  public loginForm: FormGroup = this._formBuilder.group(
-    {
-      email: ['', [Validators.required]],
-      password: ['', [Validators.required]],
-    },
-    { validators: passwordMatchValidator },
-  );
+  login(data: any): Observable<any> {
+    return this.http.post(environment.backendLogin, data);
+  }
 
-  constructor(private _formBuilder: FormBuilder) {}
+  register(data: any): Observable<any> {
+    return this.http.post(environment.backendRegister, data);
+  }
 }

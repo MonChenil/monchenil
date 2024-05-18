@@ -1,47 +1,65 @@
-<section class="bg-gray-200">
-    <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <a href="#" class="flex items-center mb-6 text-2xl font-bold">
-            <img class="w-8 h-8 mr-2" src="./assets/images/logo-mon-chenil.png" alt="Logo Mon Chenil">
-            Mon Chenil
+<main
+  class="flex min-h-screen flex-col items-center justify-center gap-6 bg-base-200"
+>
+  <a routerLink="/" class="flex items-center text-2xl font-bold">
+    <img
+      class="mr-2 h-8"
+      src="assets/images/logo-mon-chenil.png"
+      alt="Logo Mon Chenil"
+    />
+    Mon Chenil
+  </a>
+
+  <div class="card bg-base-100 shadow-xl sm:min-w-96">
+    <form
+      class="card-body space-y-2"
+      [formGroup]="registerForm"
+      (ngSubmit)="onSubmit()"
+    >
+      <h1 class="text-2xl font-bold">Créer un compte</h1>
+
+      <auth-input
+        label="Votre email"
+        type="email"
+        placeholder="johndoe@website.com"
+        [control]="registerForm.controls.email"
+        [errorMessage]="getErrorMessage('email')"
+      ></auth-input>
+
+      <auth-input
+        label="Mot de passe"
+        type="password"
+        placeholder="••••••••"
+        [control]="registerForm.controls.password"
+        [errorMessage]="getErrorMessage('password')"
+      ></auth-input>
+
+      <auth-input
+        label="Confirmer mot de passe"
+        type="password"
+        placeholder="••••••••"
+        [control]="registerForm.controls.confirmPassword"
+        [errorMessage]="getErrorMessage('confirmPassword')"
+      ></auth-input>
+
+      @if (getErrorMessage("")) {
+        <small class="text-error">{{ getErrorMessage("") }}</small>
+      }
+
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="registerForm.invalid"
+      >
+        Créer un compte
+      </button>
+
+      <small class="text-neutral">
+        Vous avez déjà un compte ?
+        <a routerLink="/login" class="link-hover link font-medium text-primary">
+          Se connecter
         </a>
-        <div
-            class="w-full bg-white rounded-lg shadow-sm md:mt-0 sm:max-w-md xl:p-0 bg-gray-50">
-            <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-                <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
-                    Créer un compte
-                </h1>
-                <form [formGroup]="authService.registerForm" class="space-y-4 md:space-y-6" (ngSubmit)="onSubmit()">
-                    <div>
-                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Votre email</label>
-                        <input type="email" name="email" id="email"
-                            class="input w-full border-gray-300"
-                            placeholder="johndoe@website.com" required="" formControlName="email">
-                    </div>
-                    <div *ngIf="getErrorMessage('email')" class="text-red-500 text-sm !mt-3">{{ getErrorMessage('email') }}</div>
-                    <div>
-                        <label for="password"
-                            class="block mb-2 text-sm font-medium text-gray-900">Mot de passe</label>
-                        <input type="password" name="password" id="password" placeholder="••••••••"
-                            class="input w-full border-gray-300"
-                            required="" formControlName="password">
-                    </div>
-                    <div *ngIf="getErrorMessage('password')" class="text-red-500 text-sm !mt-3">{{ getErrorMessage('password') }}</div>
-                    <div>
-                        <label for="confirmPassword"
-                            class="block mb-2 text-sm font-medium text-gray-900">Confirmer mot de passe</label>
-                        <input type="password" name="confirmPassword" id="confirmPassword"
-                            placeholder="••••••••"
-                            class="input w-full border-gray-300"
-                            required="" formControlName="confirmPassword">
-                    </div>
-                    <div *ngIf="getErrorMessage('confirmPassword')" class="text-red-500 text-sm !mt-3">{{ getErrorMessage('confirmPassword') }}</div>
-                    <button type="submit" class="btn btn-primary w-full text-gray-50" [disabled]="!authService.registerForm.valid">Créer un compte</button>
-                    <p class="text-sm font-light text-gray-500 text-center">
-                        Vous avez déjà un compte ? <a routerLink="/login" (click)="resetForm()"
-                            class="font-medium text-primary-600 hover:underline">Se connecter</a>
-                    </p>
-                </form>
-            </div>
-        </div>
-    </div>
-</section>
+      </small>
+    </form>
+  </div>
+</main>
