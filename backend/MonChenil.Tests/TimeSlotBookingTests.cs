@@ -31,5 +31,28 @@ namespace MonChenil.Tests
             Assert.Contains(bookedTimeSlot.Pets, pet => pet.Name == "Buddy");
             Assert.Contains(bookedTimeSlot.Pets, pet => pet.Name == "Whiskers");
         }
+
+        [Fact]
+      public void ClientsCannAddPetToTimeSlot()
+      {
+          var fakeRepository = new FakeRepository<TimeSlot>(new List<TimeSlot>());
+          var timeSlotService = new TimeSlotService(fakeRepository);
+
+          var timeSlot = new TimeSlot { Id = 1, StartDate = DateTime.Now.AddHours(1), EndDate = DateTime.Now.AddHours(2) };
+          fakeRepository.Add(timeSlot);
+
+          var pets = new List<Pet>
+          {
+              new Pet { Id = 1, Name = "Buddy", Type = PetType.Dog }
+          };
+
+          timeSlotService.AddPetToTimeSlot(timeSlot, pets);
+
+          var bookedTimeSlot = timeSlotService.GetById(1);
+
+          Assert.NotNull(bookedTimeSlot);
+          Assert.Single(bookedTimeSlot.Pets);
+          Assert.Contains(bookedTimeSlot.Pets, p => p.Name == "Buddy");
+      }
     }
 }
