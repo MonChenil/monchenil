@@ -1,1 +1,5 @@
-<p>dashboard works!</p>
+@if (isAuthenticated$ | async) {
+  <h1>Authenticated</h1>
+} @else {
+  <h1>Not Authenticated</h1>
+}

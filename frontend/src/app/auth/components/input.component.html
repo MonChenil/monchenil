@@ -1,0 +1,20 @@
+<label class="form-control">
+  <div class="label">
+    <span class="label-text text-sm font-medium">
+      {{ label }}
+    </span>
+  </div>
+  <input
+    [type]="type"
+    class="input input-bordered"
+    [placeholder]="placeholder"
+    [formControl]="control"
+  />
+  @if (errorMessage) {
+    <div class="label">
+      <span class="label-text-alt text-error">
+        {{ errorMessage }}
+      </span>
+    </div>
+  }
+</label>
