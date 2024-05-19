@@ -67,4 +67,26 @@ public class TimeSlotService
             throw new ArgumentException("Le créneau horaire en chevauche un autre");
         }
     }
+
+    public void BookTimeSlotForPets(TimeSlot timeSlot, IEnumerable<Pet> pets)
+    {
+        if (timeSlot == null)
+        {
+            throw new ArgumentNullException(nameof(timeSlot));
+        }
+
+        if (pets == null || !pets.Any())
+        {
+            throw new ArgumentException("At least one pet must be selected for booking.", nameof(pets));
+        }
+
+        timeSlot.Pets.AddRange(pets);
+
+        _repository.Update(timeSlot);
+    }
+
+    private bool Overlaps(TimeSlot timeSlotA, TimeSlot timeSlotB)
+    {
+        return timeSlotA.StartDate < timeSlotB.EndDate && timeSlotA.EndDate > timeSlotB.StartDate;
+    }
 }
