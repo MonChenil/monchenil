@@ -72,4 +72,13 @@ public class TimeSlotsController : ControllerBase
         timeSlotService.Delete(timeSlot);
         return Ok();
     }
+
+    [HttpGet("available")]
+    public IActionResult GetAvailableTimeSlots()
+    {
+        var availableTimeSlots = timeSlotService.GetAvailableTimeSlots(
+            new List<Pet>()
+        );
+        return Ok(availableTimeSlots);
+    }
 }

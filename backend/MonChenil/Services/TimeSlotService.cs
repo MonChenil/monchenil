@@ -24,6 +24,16 @@ public class TimeSlotService
         return _repository.GetAll();
     }
 
+    public IEnumerable<TimeSlot> GetAvailableTimeSlots(IEnumerable<Pet> pets)
+    {
+        var currentTime = DateTime.Now;
+        var allTimeSlots = _repository.GetAll().Where(t => t.StartDate > currentTime);
+
+        return allTimeSlots.Where(t => t.Pets.All(existingPet =>
+            pets.All(newPet => ArePetsCompatible(existingPet, newPet))
+        ));
+    }
+
     public TimeSlot? GetById(int id)
     {
         return _repository.GetById(id);
@@ -58,4 +68,3 @@ public class TimeSlotService
         }
     }
 }
-
