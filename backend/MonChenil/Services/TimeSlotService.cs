@@ -68,16 +68,17 @@ public class TimeSlotService
         }
     }
 
-    public void BookTimeSlotForPets(TimeSlot timeSlot, IEnumerable<Pet> pets)
+    public void AddPetsToTimeSlot(TimeSlot timeSlot, IEnumerable<Pet> pets)
     {
-        if (timeSlot == null)
+        foreach (var pet in pets)
         {
-            throw new ArgumentNullException(nameof(timeSlot));
-        }
-
-        if (pets == null || !pets.Any())
-        {
-            throw new ArgumentException("At least one pet must be selected for booking.", nameof(pets));
+            foreach (var existingPet in timeSlot.Pets)
+            {
+                if (!ArePetsCompatible(existingPet, pet))
+                {
+                    throw new ArgumentException($"The pet '{pet.Name}' (Type: {pet.Type}) is not compatible with another pet already booked for this time slot.");
+                }
+            }
         }
 
         timeSlot.Pets.AddRange(pets);
@@ -85,21 +86,9 @@ public class TimeSlotService
         _repository.Update(timeSlot);
     }
 
-    public void AddPetToTimeSlot(TimeSlot timeSlot, IEnumerable<Pet> pet)
+    private bool ArePetsCompatible(Pet pet1, Pet pet2)
     {
-        if (timeSlot == null)
-        {
-            throw new ArgumentNullException(nameof(timeSlot));
-        }
-
-        if (pet == null || !pet.Any())
-        {
-            throw new ArgumentException("At least one pet must be selected for adding to the time slot.", nameof(pet));
-        }
-
-        timeSlot.Pets.AddRange(pet);
-
-        _repository.Update(timeSlot);
+        return !pet1.IncompatibleTypes.Contains(pet2.Type) && !pet2.IncompatibleTypes.Contains(pet1.Type);
     }
 
     private bool Overlaps(TimeSlot timeSlotA, TimeSlot timeSlotB)
