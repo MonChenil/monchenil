@@ -1,30 +1,30 @@
 using Microsoft.AspNetCore.Mvc;
-using MonChenil.Data;
 using MonChenil.Entities;
+using MonChenil.Services;
 
 namespace MonChenil.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class TimeSlotsController : ControllerBase
 {
-    private readonly ApplicationDbContext _context;
+    private readonly TimeSlotService timeSlotService;
 
-    public TimeSlotsController(ApplicationDbContext context)
+    public TimeSlotsController(TimeSlotService timeSlotService)
     {
-        _context = context;
+        this.timeSlotService = timeSlotService;
     }
 
     [HttpGet]
     public IActionResult Get()
     {
-        return Ok(_context.TimeSlots.ToList());
+        return Ok(timeSlotService.GetAll());
     }
 
     [HttpGet("{id}")]
     public IActionResult Get(int id)
     {
-        var timeSlot = _context.TimeSlots.Find(id);
+        var timeSlot = timeSlotService.GetById(id);
         if (timeSlot == null)
         {
             return NotFound();
@@ -36,35 +36,40 @@ public class TimeSlotsController : ControllerBase
     [HttpPost]
     public IActionResult Post(TimeSlot timeSlot)
     {
-        _context.TimeSlots.Add(timeSlot);
-        _context.SaveChanges();
+        try
+        {
+            timeSlotService.Add(timeSlot);
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(e.Message);
+        }
+
         return CreatedAtAction(nameof(Get), new { id = timeSlot.Id }, timeSlot);
     }
 
     [HttpPut()]
     public IActionResult Put(TimeSlot timeSlot)
     {
-        if (!_context.TimeSlots.Any(p => p.Id == timeSlot.Id))
+        if (!timeSlotService.Exists(t => t.Id == timeSlot.Id))
         {
             return NotFound();
         }
 
-        _context.TimeSlots.Update(timeSlot);
-        _context.SaveChanges();
+        timeSlotService.Update(timeSlot);
         return Ok();
     }
 
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        var timeSlot = _context.TimeSlots.Find(id);
+        var timeSlot = timeSlotService.GetById(id);
         if (timeSlot == null)
         {
             return NotFound();
         }
 
-        _context.TimeSlots.Remove(timeSlot);
-        _context.SaveChanges();
+        timeSlotService.Delete(timeSlot);
         return Ok();
     }
 }

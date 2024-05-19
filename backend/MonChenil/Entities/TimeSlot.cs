@@ -1,6 +1,6 @@
 namespace MonChenil.Entities;
 
-public class TimeSlot
+public class TimeSlot : IEntity
 {
     public int Id { get; set; }
     public DateTime StartDate { get; set; }
