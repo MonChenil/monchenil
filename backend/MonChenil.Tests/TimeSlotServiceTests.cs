@@ -15,7 +15,10 @@ namespace MonChenil.Tests
                 new TimeSlot { StartDate = DateTime.Now.AddHours(1), EndDate = DateTime.Now.AddHours(2) },
                 new TimeSlot { StartDate = DateTime.Now.AddHours(-1), EndDate = DateTime.Now.AddHours(1) },
             };
-            var timeSlotService = new TimeSlotService(new FakeRepository<TimeSlot>(existingTimeSlots));
+
+            var petRepository = new FakeRepository<Pet>();
+
+            var timeSlotService = new TimeSlotService(new FakeRepository<TimeSlot>(existingTimeSlots), petRepository);
 
             var availableTimeSlots = timeSlotService.GetAvailableTimeSlots(new List<Pet>());
 

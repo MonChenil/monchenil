@@ -1,4 +1,3 @@
-using Xunit;
 using MonChenil.Entities;
 using MonChenil.Repositories;
 using MonChenil.Services;
@@ -11,7 +10,10 @@ namespace MonChenil.Tests
         public void ClientsCanSelectPetsForBooking()
         {
             var fakeRepository = new FakeRepository<TimeSlot>(new List<TimeSlot>());
-            var timeSlotService = new TimeSlotService(fakeRepository);
+
+            var petRepository = new FakeRepository<Pet>();
+
+            var timeSlotService = new TimeSlotService(fakeRepository, petRepository);
 
             var timeSlot = new TimeSlot { Id = 1, StartDate = DateTime.Now.AddHours(1), EndDate = DateTime.Now.AddHours(2) };
             fakeRepository.Add(timeSlot);
@@ -22,7 +24,7 @@ namespace MonChenil.Tests
                 new Pet { Id = 2, Name = "Whiskers", Type = PetType.Cat }
             };
 
-            timeSlotService.BookTimeSlotForPets(timeSlot, pets);
+            timeSlotService.AddPetsToTimeSlot(timeSlot, pets);
 
             var bookedTimeSlot = timeSlotService.GetById(1);
 
@@ -32,27 +34,49 @@ namespace MonChenil.Tests
             Assert.Contains(bookedTimeSlot.Pets, pet => pet.Name == "Whiskers");
         }
 
-        [Fact]
-      public void ClientsCannAddPetToTimeSlot()
+      [Fact]
+      public void ClientsCanAddPetsToTimeSlot()
       {
-          var fakeRepository = new FakeRepository<TimeSlot>(new List<TimeSlot>());
-          var timeSlotService = new TimeSlotService(fakeRepository);
+        var fakeRepository = new FakeRepository<TimeSlot>(new List<TimeSlot>());
+        var petRepository = new FakeRepository<Pet>();
 
-          var timeSlot = new TimeSlot { Id = 1, StartDate = DateTime.Now.AddHours(1), EndDate = DateTime.Now.AddHours(2) };
-          fakeRepository.Add(timeSlot);
+        var timeSlotService = new TimeSlotService(fakeRepository, petRepository);
 
-          var pets = new List<Pet>
-          {
-              new Pet { Id = 1, Name = "Buddy", Type = PetType.Dog }
-          };
+        var timeSlot = new TimeSlot { Id = 1, StartDate = DateTime.Now.AddHours(1), EndDate = DateTime.Now.AddHours(2) };
+        fakeRepository.Add(timeSlot);
 
-          timeSlotService.AddPetToTimeSlot(timeSlot, pets);
+        var pets = new List<Pet>
+        {
+            new Pet { Id = 1, Name = "Buddy", Type = PetType.Dog }
+        };
 
-          var bookedTimeSlot = timeSlotService.GetById(1);
+        timeSlotService.AddPetsToTimeSlot(timeSlot, pets);
 
-          Assert.NotNull(bookedTimeSlot);
-          Assert.Single(bookedTimeSlot.Pets);
-          Assert.Contains(bookedTimeSlot.Pets, p => p.Name == "Buddy");
+        var bookedTimeSlot = timeSlotService.GetById(1);
+
+        Assert.NotNull(bookedTimeSlot);
+        Assert.Single(bookedTimeSlot.Pets);
+        Assert.Contains(bookedTimeSlot.Pets, p => p.Name == "Buddy");
       }
+
+        [Fact]
+        public void IncompatiblePetsCannotBeAddedToSameTimeSlot()
+        {
+            var fakeRepository = new FakeRepository<TimeSlot>(new List<TimeSlot>());
+
+            var petRepository = new FakeRepository<Pet>();
+
+            var timeSlotService = new TimeSlotService(fakeRepository, petRepository);
+
+            var timeSlot = new TimeSlot { Id = 1, StartDate = DateTime.Now.AddHours(1), EndDate = DateTime.Now.AddHours(2) };
+            fakeRepository.Add(timeSlot);
+
+            var dog = new Pet { Id = 1, Name = "Buddy", Type = PetType.Dog, IncompatibleTypes = new List<PetType> { PetType.Cat } };
+            var cat = new Pet { Id = 2, Name = "Whiskers", Type = PetType.Cat, IncompatibleTypes = new List<PetType> { PetType.Dog } };
+
+            timeSlotService.AddPetsToTimeSlot(timeSlot, new List<Pet> { dog });
+
+            Assert.Throws<ArgumentException>(() => timeSlotService.AddPetsToTimeSlot(timeSlot, new List<Pet> { cat }));
+        }
     }
 }

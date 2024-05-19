@@ -74,11 +74,10 @@ public class TimeSlotsController : ControllerBase
     }
 
     [HttpGet("available")]
-    public IActionResult GetAvailableTimeSlots()
+    public IActionResult GetAvailableTimeSlots([FromQuery] List<int> petIds)
     {
-        var availableTimeSlots = timeSlotService.GetAvailableTimeSlots(
-            new List<Pet>()
-        );
+        var pets = timeSlotService.GetPetsByIds(petIds);
+        var availableTimeSlots = timeSlotService.GetAvailableTimeSlots(pets);
         return Ok(availableTimeSlots);
     }
 }

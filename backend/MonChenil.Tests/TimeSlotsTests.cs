@@ -81,7 +81,9 @@ public class TimeSlotsTests
     public void WhenAddingTimeSlot_AndNoOverlappingTimeSlotExists_ThenTimeSlotIsCreated(
         TimeSlot timeSlot, List<TimeSlot> existingTimeSlots)
     {
-        var timeSlotService = new TimeSlotService(new FakeRepository<TimeSlot>(existingTimeSlots));
+        var petRepository = new FakeRepository<Pet>();
+
+        var timeSlotService = new TimeSlotService(new FakeRepository<TimeSlot>(existingTimeSlots), petRepository);
 
         timeSlotService.Add(timeSlot);
 
@@ -93,7 +95,9 @@ public class TimeSlotsTests
     public void WhenAddingTimeSlot_AndOverlappingTimeSlotExists_ThenTimeSlotIsNotCreated_AndAnExceptionIsThrown(
         TimeSlot timeSlot, List<TimeSlot> existingTimeSlots)
     {
-        var timeSlotService = new TimeSlotService(new FakeRepository<TimeSlot>(existingTimeSlots));
+        var petRepository = new FakeRepository<Pet>();
+
+        var timeSlotService = new TimeSlotService(new FakeRepository<TimeSlot>(existingTimeSlots), petRepository);
 
         void action() => timeSlotService.Add(timeSlot);
 
@@ -107,7 +111,10 @@ public class TimeSlotsTests
     public void WhenAddingTimeSlot_AndStartDateIsAfterEndDate_ThenAnExceptionIsThrown(
         TimeSlot timeSlot)
     {
-        var timeSlotService = new TimeSlotService(new FakeRepository<TimeSlot>());
+
+        var petRepository = new FakeRepository<Pet>();
+
+        var timeSlotService = new TimeSlotService(new FakeRepository<TimeSlot>(), petRepository);
 
         void action() => timeSlotService.Add(timeSlot);
 
