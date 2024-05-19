@@ -85,6 +85,23 @@ public class TimeSlotService
         _repository.Update(timeSlot);
     }
 
+    public void AddPetToTimeSlot(TimeSlot timeSlot, IEnumerable<Pet> pet)
+    {
+        if (timeSlot == null)
+        {
+            throw new ArgumentNullException(nameof(timeSlot));
+        }
+
+        if (pet == null || !pet.Any())
+        {
+            throw new ArgumentException("At least one pet must be selected for adding to the time slot.", nameof(pet));
+        }
+
+        timeSlot.Pets.AddRange(pet);
+
+        _repository.Update(timeSlot);
+    }
+
     private bool Overlaps(TimeSlot timeSlotA, TimeSlot timeSlotB)
     {
         return timeSlotA.StartDate < timeSlotB.EndDate && timeSlotA.EndDate > timeSlotB.StartDate;
