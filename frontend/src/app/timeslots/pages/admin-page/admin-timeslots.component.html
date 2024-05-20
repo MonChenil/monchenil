@@ -10,11 +10,11 @@
     Mon Chenil
   </a>
 
-  <div class="flex gap-8 max-lg:flex-col">
-    <timeslots-add (timeSlotAdded)="refresh()"></timeslots-add>
+  <div class="flex gap-8 max-lg:flex-col-reverse">
     <timeslots-list
       [timeSlots]="timeSlots$ | async"
       (timeSlotDeleted)="refresh()"
     ></timeslots-list>
+    <timeslots-add (timeSlotAdded)="refresh()"></timeslots-add>
   </div>
 </main>
