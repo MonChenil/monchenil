@@ -1,0 +1,5 @@
+<div class="flex h-96 flex-col gap-4 overflow-y-scroll pr-4">
+    @for (pet of pets; track pet.id) {
+    <pets-card [pet]="pet" (petDeleted)="petDeleted.emit($event)"></pets-card>
+    }
+</div>
