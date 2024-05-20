@@ -13,6 +13,10 @@ const routes: Routes = [
     loadChildren: () =>
       import('./timeslots/timeslots.module').then((m) => m.TimeSlotsModule),
   },
+  {
+    path: 'pets',
+    loadChildren: () => import('./pets/pets.module').then((m) => m.PetsModule),
+  },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: '**', redirectTo: 'dashboard' },
 ];
