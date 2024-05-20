@@ -19,21 +19,21 @@
         }
       </header>
 
-      <auth-input
+      <app-input
         label="Votre email"
         type="email"
         placeholder="test@example.com"
         [control]="loginForm.controls.email"
         [errorMessage]="getErrorMessage('email')"
-      ></auth-input>
+      ></app-input>
 
-      <auth-input
+      <app-input
         label="Mot de passe"
         type="password"
         placeholder="••••••••"
         [control]="loginForm.controls.password"
         [errorMessage]="getErrorMessage('password')"
-      ></auth-input>
+      ></app-input>
 
       <button
         type="submit"
@@ -46,7 +46,7 @@
       <small class="text-neutral">
         Vous n'avez pas de compte ?
         <a
-          routerLink="/register"
+          routerLink="/auth/register"
           class="link-hover link font-medium text-primary"
           >Créer un compte</a
         >
