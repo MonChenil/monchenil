@@ -10,34 +10,8 @@
     Mon Chenil
   </a>
 
-  <div class="card bg-base-100 shadow-xl sm:min-w-96">
-    <form class="card-body space-y-2" (ngSubmit)="onSubmit()">
-      <header>
-        <h1 class="text-2xl font-bold">Ajouter un créneau horaire</h1>
-        @if (getErrorMessage("")) {
-          <small class="text-error">{{ getErrorMessage("") }}</small>
-        }
-      </header>
-
-      <app-input
-        label="Date de début"
-        type="datetime-local"
-        placeholder="jj/mm/aaaa"
-        [control]="form.controls.startDate"
-        [errorMessage]="getErrorMessage('startDate')"
-      ></app-input>
-
-      <app-input
-        label="Date de fin"
-        type="datetime-local"
-        placeholder="jj/mm/aaaa"
-        [control]="form.controls.endDate"
-        [errorMessage]="getErrorMessage('endDate')"
-      ></app-input>
-
-      <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
-        Enregistrer
-      </button>
-    </form>
+  <div class="flex gap-8 max-lg:flex-col">
+    <timeslots-add (timeSlotAdded)="refresh()"></timeslots-add>
+    <timeslots-list [timeSlots]="timeSlots$ | async"></timeslots-list>
   </div>
 </main>
