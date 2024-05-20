@@ -12,6 +12,9 @@
 
   <div class="flex gap-8 max-lg:flex-col">
     <timeslots-add (timeSlotAdded)="refresh()"></timeslots-add>
-    <timeslots-list [timeSlots]="timeSlots$ | async"></timeslots-list>
+    <timeslots-list
+      [timeSlots]="timeSlots$ | async"
+      (timeSlotDeleted)="refresh()"
+    ></timeslots-list>
   </div>
 </main>

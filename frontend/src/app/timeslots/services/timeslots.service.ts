@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
 import { NullablePartial } from '../../shared/shared.types';
 import { TimeSlot } from '../models/timeslot';
-import { environment } from '../../../environments/environment';
 
 @Injectable()
 export class TimeSlotsService {
@@ -10,6 +10,10 @@ export class TimeSlotsService {
 
   create(timeSlot: NullablePartial<TimeSlot>) {
     return this.http.post(environment.backendTimeSlots, timeSlot);
+  }
+
+  delete(id: number) {
+    return this.http.delete(`${environment.backendTimeSlots}/${id}`);
   }
 
   getAll() {

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { BehaviorSubject, switchMap } from 'rxjs';
 import { TimeSlotsService } from '../../services/timeslots.service';
 
 @Component({
@@ -8,9 +9,12 @@ import { TimeSlotsService } from '../../services/timeslots.service';
 export class AdminTimeSlotsComponent {
   constructor(private timeSlotsService: TimeSlotsService) {}
 
-  timeSlots$ = this.timeSlotsService.getAll();
+  refresh$ = new BehaviorSubject(null);
+  timeSlots$ = this.refresh$.pipe(
+    switchMap(() => this.timeSlotsService.getAll()),
+  );
 
   refresh() {
-    this.timeSlots$ = this.timeSlotsService.getAll();
+    this.refresh$.next(null);
   }
 }

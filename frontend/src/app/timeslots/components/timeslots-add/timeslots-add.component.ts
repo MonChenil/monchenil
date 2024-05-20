@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { TimeSlotsService } from '../../services/timeslots.service';
@@ -25,8 +26,8 @@ export class TimeSlotsAddComponent {
         this.timeSlotAdded.emit(response);
         this.form.reset();
       },
-      error: (error) => {
-        this.form.setErrors({ invalid: true });
+      error: (error: HttpErrorResponse) => {
+        this.form.setErrors({ httpError: error.error });
       },
     });
   }
@@ -42,8 +43,8 @@ export class TimeSlotsAddComponent {
       return 'Ce champ est obligatoire';
     }
 
-    if (field.errors['invalid']) {
-      return 'Une erreur est survenue';
+    if (field.errors['httpError']) {
+      return field.errors['httpError'];
     }
 
     return null;

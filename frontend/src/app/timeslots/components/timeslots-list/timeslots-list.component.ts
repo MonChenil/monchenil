@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { TimeSlot } from '../../models/timeslot';
 
 @Component({
@@ -8,4 +8,5 @@ import { TimeSlot } from '../../models/timeslot';
 })
 export class TimeslotsListComponent {
   @Input() declare timeSlots: TimeSlot[] | null;
+  @Output() timeSlotDeleted = new EventEmitter();
 }
