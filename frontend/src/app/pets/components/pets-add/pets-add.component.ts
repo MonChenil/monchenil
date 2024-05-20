@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
-import { FormArray, FormBuilder, Validators } from '@angular/forms';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { PetsService } from '../../services/pets.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'pets-add',
@@ -12,6 +13,8 @@ export class PetsAddComponent {
     private petsService: PetsService,
   ) {}
 
+  @Output() petAdded = new EventEmitter();
+
   incompatibleTypesList = ['Chien', 'Chat'];
 
   form = this.formBuilder.group({
@@ -22,26 +25,35 @@ export class PetsAddComponent {
     ),
   });
 
-  get incompatibleTypes(): FormArray {
-    return this.form.get('incompatibleTypes') as FormArray;
-  }
-
   onSubmit() {
+    let selectedIncompatibleTypes;
     if (this.form.value.incompatibleTypes) {
-      const selectedIncompatibleTypes = this.form.value.incompatibleTypes
+      selectedIncompatibleTypes = this.form.value.incompatibleTypes
         .map((checked, index) =>
           checked ? this.incompatibleTypesList[index] : null,
         )
         .filter((value) => value !== null);
-
-      console.log(selectedIncompatibleTypes);
     }
+
+    const petToAdd = {
+      name: this.form.value.name,
+      type: this.form.value.type,
+      incompatibleTypes: selectedIncompatibleTypes,
+    };
+
+    this.petsService.create(petToAdd).subscribe({
+      next: (response) => {
+        this.petAdded.emit(response);
+        this.form.reset();
+      },
+      error: (error: HttpErrorResponse) => {
+        this.form.setErrors({ httpError: error.error });
+      },
+    });
   }
 
   public getErrorMessage(fieldName: string): string | null {
-    const field = fieldName ?
-      this.form.get(fieldName)
-      : this.form;
+    const field = fieldName ? this.form.get(fieldName) : this.form;
 
     if (!field || !field.errors || !field.touched || !field.dirty) {
       return null;
