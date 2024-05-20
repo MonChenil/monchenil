@@ -98,7 +98,7 @@ public class TimeSlotsTests
         void action() => timeSlotService.Add(timeSlot);
 
         var ex = Assert.Throws<ArgumentException>(action);
-        Assert.Equal("Time slot overlaps with another", ex.Message);
+        Assert.Equal("Le créneau horaire en chevauche un autre", ex.Message);
         Assert.DoesNotContain(timeSlot, timeSlotService.GetAll());
     }
 
@@ -112,7 +112,7 @@ public class TimeSlotsTests
         void action() => timeSlotService.Add(timeSlot);
 
         var ex = Assert.Throws<ArgumentException>(action);
-        Assert.Equal("Start date must be before end date", ex.Message);
+        Assert.Equal("La date de début doit se situer avant la date de fin", ex.Message);
         Assert.DoesNotContain(timeSlot, timeSlotService.GetAll());
     }
 }

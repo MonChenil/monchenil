@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 @Component({
-  selector: 'auth-input',
+  selector: 'app-input',
   templateUrl: './input.component.html',
 })
 export class InputComponent {

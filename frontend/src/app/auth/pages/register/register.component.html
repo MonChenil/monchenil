@@ -1,65 +1,55 @@
-<main
-  class="flex min-h-screen flex-col items-center justify-center gap-6 bg-base-200"
->
-  <a routerLink="/" class="flex items-center text-2xl font-bold">
-    <img
-      class="mr-2 h-8"
-      src="assets/images/logo-mon-chenil.png"
-      alt="Logo Mon Chenil"
-    />
-    Mon Chenil
-  </a>
+<div class="card bg-base-100 shadow-xl sm:min-w-96">
+  <form
+    class="card-body space-y-2"
+    [formGroup]="registerForm"
+    (ngSubmit)="onSubmit()"
+  >
+    <h1 class="text-2xl font-bold">Créer un compte</h1>
 
-  <div class="card bg-base-100 shadow-xl sm:min-w-96">
-    <form
-      class="card-body space-y-2"
-      [formGroup]="registerForm"
-      (ngSubmit)="onSubmit()"
+    <app-input
+      label="Votre email"
+      type="email"
+      placeholder="johndoe@website.com"
+      [control]="registerForm.controls.email"
+      [errorMessage]="getErrorMessage('email')"
+    ></app-input>
+
+    <app-input
+      label="Mot de passe"
+      type="password"
+      placeholder="••••••••"
+      [control]="registerForm.controls.password"
+      [errorMessage]="getErrorMessage('password')"
+    ></app-input>
+
+    <app-input
+      label="Confirmer mot de passe"
+      type="password"
+      placeholder="••••••••"
+      [control]="registerForm.controls.confirmPassword"
+      [errorMessage]="getErrorMessage('confirmPassword')"
+    ></app-input>
+
+    @if (getErrorMessage("")) {
+      <small class="text-error">{{ getErrorMessage("") }}</small>
+    }
+
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="registerForm.invalid"
     >
-      <h1 class="text-2xl font-bold">Créer un compte</h1>
+      Créer un compte
+    </button>
 
-      <auth-input
-        label="Votre email"
-        type="email"
-        placeholder="johndoe@website.com"
-        [control]="registerForm.controls.email"
-        [errorMessage]="getErrorMessage('email')"
-      ></auth-input>
-
-      <auth-input
-        label="Mot de passe"
-        type="password"
-        placeholder="••••••••"
-        [control]="registerForm.controls.password"
-        [errorMessage]="getErrorMessage('password')"
-      ></auth-input>
-
-      <auth-input
-        label="Confirmer mot de passe"
-        type="password"
-        placeholder="••••••••"
-        [control]="registerForm.controls.confirmPassword"
-        [errorMessage]="getErrorMessage('confirmPassword')"
-      ></auth-input>
-
-      @if (getErrorMessage("")) {
-        <small class="text-error">{{ getErrorMessage("") }}</small>
-      }
-
-      <button
-        type="submit"
-        class="btn btn-primary"
-        [disabled]="registerForm.invalid"
+    <small class="text-neutral">
+      Vous avez déjà un compte ?
+      <a
+        routerLink="/auth/login"
+        class="link-hover link font-medium text-primary"
       >
-        Créer un compte
-      </button>
-
-      <small class="text-neutral">
-        Vous avez déjà un compte ?
-        <a routerLink="/login" class="link-hover link font-medium text-primary">
-          Se connecter
-        </a>
-      </small>
-    </form>
-  </div>
-</main>
+        Se connecter
+      </a>
+    </small>
+  </form>
+</div>

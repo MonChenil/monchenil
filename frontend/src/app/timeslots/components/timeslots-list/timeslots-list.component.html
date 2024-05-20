@@ -1,0 +1,8 @@
+<div class="flex h-96 flex-col gap-4 overflow-y-scroll pr-4">
+  @for (timeSlot of timeSlots; track timeSlot.id) {
+    <timeslots-card
+      [timeSlot]="timeSlot"
+      (timeSlotDeleted)="timeSlotDeleted.emit($event)"
+    ></timeslots-card>
+  }
+</div>
