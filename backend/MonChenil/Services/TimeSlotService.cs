@@ -49,18 +49,13 @@ public class TimeSlotService
     {
         if (timeSlot.StartDate >= timeSlot.EndDate)
         {
-            throw new ArgumentException("Start date must be before end date");
+            throw new ArgumentException("La date de début doit se situer avant la date de fin");
         }
 
-        if (_repository.Exists(t => Overlaps(timeSlot, t)))
+        if (_repository.Exists(t => timeSlot.StartDate < t.EndDate && timeSlot.EndDate > t.StartDate))
         {
-            throw new ArgumentException("Time slot overlaps with another");
+            throw new ArgumentException("Le créneau horaire en chevauche un autre");
         }
-    }
-
-    private bool Overlaps(TimeSlot timeSlotA, TimeSlot timeSlotB)
-    {
-        return timeSlotA.StartDate < timeSlotB.EndDate && timeSlotA.EndDate > timeSlotB.StartDate;
     }
 }
 
