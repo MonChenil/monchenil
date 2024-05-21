@@ -1,52 +1,63 @@
 <div class="card min-h-96 bg-base-100 shadow-xl sm:min-w-96">
-    <form class="card-body justify-between space-y-2" [formGroup]="form" (ngSubmit)="onSubmit()">
-        <header>
-        <h1 class="text-2xl font-bold">Ajouter un animal</h1>
-        @if (getErrorMessage("")) {
-            <small class="text-error">{{ getErrorMessage("") }}</small>
+  <form
+    class="card-body justify-between space-y-2"
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+  >
+    <header>
+      <h1 class="text-2xl font-bold">Ajouter un animal</h1>
+      @if (getErrorMessage("")) {
+        <small class="text-error">{{ getErrorMessage("") }}</small>
+      }
+    </header>
+
+    <app-input
+      label="Nom de votre animal"
+      type="text"
+      placeholder="Félix"
+      [control]="form.controls.name"
+      [errorMessage]="getErrorMessage('name')"
+    ></app-input>
+
+    <label class="form-control">
+      <div class="label">
+        <span class="label-text">Type</span>
+      </div>
+      <select class="select select-bordered text-base" formControlName="type">
+        <option value="" disabled selected>Sélectionner le type</option>
+        @for (type of petTypes | keyvalue; track $index) {
+          <option value="{{ type.key }}">{{ type.value }}</option>
         }
-        </header>
-    
-        <app-input
-        label="Nom de votre animal"
-        type="text"
-        placeholder="Félix"
-        [control]="form.controls.name"
-        [errorMessage]="getErrorMessage('name')"
-        ></app-input>
-
-        <label class="form-control">
-            <div class="label">
-                <span class="label-text">Type</span>
-            </div>
-            <select class="select select-bordered text-base" formControlName="type">
-                <option disabled selected>Sélectionner le type</option>
-                <option>Chien</option>
-                <option>Chat</option>
-            </select>
-            @if (getErrorMessage("type")) {
-            <div class="label">
-                <span class="label-text-alt text-error">
-                    {{ getErrorMessage("type") }}
-                </span>
-            </div>
-            }
-        </label>
-
-        <div class="form-control">
-            <div class="label">
-                <span class="label-text">Mon animal est incompatible avec :</span>
-            </div>
-            <ng-container formArrayName="incompatibleTypes">
-                <label class="label cursor-pointer justify-start" *ngFor="let type of incompatibleTypesList; let i = index">
-                    <input type="checkbox" class="checkbox" [formControlName]="i" />
-                    <span class="label-text ml-1">{{ type }}</span>
-                </label>
-            </ng-container>
+      </select>
+      @if (getErrorMessage("type")) {
+        <div class="label">
+          <span class="label-text-alt text-error">
+            {{ getErrorMessage("type") }}
+          </span>
         </div>
+      }
+    </label>
 
-        <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
-            Ajouter
-        </button>
-    </form>
+    <div class="form-control">
+      <div class="label">
+        <span class="label-text">Mon animal est incompatible avec :</span>
+      </div>
+      <ng-container formArrayName="incompatibleTypes">
+        @for (type of petTypes | keyvalue; track $index) {
+          <label class="label cursor-pointer justify-start">
+            <input
+              type="checkbox"
+              class="checkbox"
+              [formControlName]="type.key"
+            />
+            <span class="label-text ml-1">{{ type.value }}</span>
+          </label>
+        }
+      </ng-container>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
+      Ajouter
+    </button>
+  </form>
 </div>

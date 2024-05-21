@@ -1,7 +1,7 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { PetsService } from '../../services/pets.service';
-import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'pets-add',
@@ -15,36 +15,34 @@ export class PetsAddComponent {
 
   @Output() petAdded = new EventEmitter();
 
-  incompatibleTypesList = ['Chien', 'Chat'];
+  petTypes = ['Chat', 'Chien']; // Order is important. Must match backend/MonChenil/Entities/Pet.cs
 
   form = this.formBuilder.group({
-    name: ['', Validators.required, Validators.minLength(3)],
+    name: ['', [Validators.required, Validators.minLength(3)]],
     type: ['', Validators.required],
     incompatibleTypes: this.formBuilder.array(
-      this.incompatibleTypesList.map(() => this.formBuilder.control(false)),
+      this.petTypes.map(() => this.formBuilder.control(false)),
     ),
   });
 
   onSubmit() {
-    let selectedIncompatibleTypes;
-    if (this.form.value.incompatibleTypes) {
-      selectedIncompatibleTypes = this.form.value.incompatibleTypes
-        .map((checked, index) =>
-          checked ? this.incompatibleTypesList[index] : null,
-        )
-        .filter((value) => value !== null);
-    }
+    const selectedIncompatibleTypes: number[] =
+      this.form.value.incompatibleTypes
+        ?.map((checked, index) => (checked ? index : -1))
+        .filter((index) => index !== -1) || [];
 
     const petToAdd = {
       name: this.form.value.name,
-      type: this.form.value.type,
+      type: parseInt(this.form.value.type!),
       incompatibleTypes: selectedIncompatibleTypes,
     };
 
     this.petsService.create(petToAdd).subscribe({
       next: (response) => {
         this.petAdded.emit(response);
-        this.form.reset();
+        this.form.reset({
+          type: '',
+        });
       },
       error: (error: HttpErrorResponse) => {
         this.form.setErrors({ httpError: error.error });
@@ -64,7 +62,7 @@ export class PetsAddComponent {
     }
 
     if (field.errors['minlength']) {
-      return `Le mot de passe doit avoir au moins ${field.errors['minlength'].requiredLength} caractères`;
+      return `Ce champ doit contenir au moins ${field.errors['minlength'].requiredLength} caractères`;
     }
 
     if (field.errors['httpError']) {
