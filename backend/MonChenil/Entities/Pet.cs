@@ -13,5 +13,5 @@ public class Pet : IEntity
     public PetType Type { get; set; }
     public User? Owner { get; set; }
     public List<TimeSlot> TimeSlots { get; set; } = [];
-    public List<PetType> IncompatibleTypes { get; set; } = [];
+    public List<PetType> IncompatibleTypes { get; set; } = new List<PetType>();
 }
