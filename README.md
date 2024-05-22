@@ -8,16 +8,15 @@ Application de gestion d'un chenil
 ### Contexte Métier
 - Les créneaux doivent pouvoir se chevaucher. L'utilisateur indique une durée souhaitée pour déposer son chien, avec une condition de **X chiens max** par créneau.
 - Le système doit permettre de :
-  - Sélectionner une **date de début** pour déposer le chien (toutes les 15 minutes).
-  - Indiquer une **durée souhaitée** (s'appuyer sur Google Maps pour l'implémentation).
-  - Choisir une **date de récupération** du chien.
+  - Sélectionner une **date (créneau) de début** pour déposer le chien (toutes les 15 minutes).
+  - Sélectionner une **date (créneau) de fin** pour récupérer le chien (s'appuyer sur Google Maps pour l'implémentation).
 
 ### Liste d'Attente
 - **Samy : NON** à la liste d'attente.
 - Possibilité de confirmation par appel API avec un mock.
 
 ### Gestion des Incompatibilités
-- Points à revoir et compléter.
+- Nice to have, pour l'instant on oublie
 
 ## Tests du Front-End
 
