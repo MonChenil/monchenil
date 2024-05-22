@@ -58,6 +58,13 @@ app.MapGet("/is-authenticated", (ClaimsPrincipal claims) =>
     return claims.Identity?.IsAuthenticated == true;
 });
 
+// Route to logout
+app.MapPost("/logout", async (SignInManager<User> signInManager) =>
+{
+    await signInManager.SignOutAsync();
+    return Results.Ok();
+});
+
 app.UseHttpsRedirection();
 
 app.MapIdentityApi<User>();

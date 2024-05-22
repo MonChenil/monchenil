@@ -18,4 +18,8 @@ export class AuthService {
   register(data: any): Observable<any> {
     return this.http.post(environment.backendRegister, data);
   }
+
+  logout(): Observable<any> {
+    return this.http.post(environment.backendLogout, {});
+  }
 }
