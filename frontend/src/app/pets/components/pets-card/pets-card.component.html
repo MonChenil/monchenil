@@ -1,13 +1,15 @@
 <div class="card bg-base-100 shadow-md">
   <div class="card-body flex-row justify-between gap-4 p-6">
+    <button class="btn btn-circle btn-lg text-3xl">
+      {{ petIcons[pet.type] }}
+    </button>
     <h2 class="card-title text-base">
-      {{ timeSlot.startDate | date: "dd/MM/yyyy HH:mm" }} -
-      {{ timeSlot.endDate | date: "dd/MM/yyyy HH:mm" }}
+      {{ pet.name }} - {{ petTypes[pet.type] }}
     </h2>
     <div class="card-actions">
       <button
         class="btn btn-square btn-outline btn-error"
-        (click)="deleteTimeSlot(timeSlot)"
+        (click)="deletePet(pet)"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

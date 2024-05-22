@@ -7,10 +7,12 @@ import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/services/auth.service';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { TimeSlotsModule } from './timeslots/timeslots.module';
+import { PetsModule } from './pets/pets.module';
 
 @NgModule({
   declarations: [AppComponent, DashboardComponent, NavbarComponent],
-  imports: [BrowserModule, AppRoutingModule, AuthModule],
+  imports: [BrowserModule, AppRoutingModule, AuthModule, TimeSlotsModule, PetsModule],
   providers: [AuthService],
   bootstrap: [AppComponent],
 })
