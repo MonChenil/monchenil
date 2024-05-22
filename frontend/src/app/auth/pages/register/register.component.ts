@@ -18,7 +18,7 @@ export class RegisterPageComponent {
   registerForm = this.formBuilder.group(
     {
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.required, Validators.minLength(6), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W).+$/)]],
       confirmPassword: ['', [Validators.required]],
     },
     {
@@ -60,6 +60,10 @@ export class RegisterPageComponent {
 
     if (field.errors['minlength']) {
       return `Le mot de passe doit avoir au moins ${field.errors['minlength'].requiredLength} caractères`;
+    }
+
+    if (field.errors['pattern']) {
+      return `Le mot de passe doit contenir une minuscule, une majuscule, un chiffre, et un caractère non-alphanumérique`;
     }
 
     if (field.errors['passwordMismatch']) {
