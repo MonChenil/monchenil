@@ -1,30 +1,32 @@
 using Microsoft.AspNetCore.Mvc;
 using MonChenil.Infrastructure.Entities;
-using MonChenil.Domain.Services;
+using MonChenil.Infrastructure.Repositories;
 
 namespace MonChenil.Controllers;
 
+
 [ApiController]
 [Route("[controller]")]
+
 public class TimeSlotsController : ControllerBase
 {
-    private readonly TimeSlotService timeSlotService;
+    private readonly IRepository<TimeSlot> repository;
 
-    public TimeSlotsController(TimeSlotService timeSlotService)
+    public TimeSlotsController(IRepository<TimeSlot> repository)
     {
-        this.timeSlotService = timeSlotService;
+        this.repository = repository;
     }
 
     [HttpGet]
     public IActionResult Get()
     {
-        return Ok(timeSlotService.GetAll());
+        return Ok(repository.GetAll());
     }
 
     [HttpGet("{id}")]
     public IActionResult Get(int id)
     {
-        var timeSlot = timeSlotService.GetById(id);
+        var timeSlot = repository.GetById(id);
         if (timeSlot == null)
         {
             return NotFound();
@@ -38,7 +40,7 @@ public class TimeSlotsController : ControllerBase
     {
         try
         {
-            timeSlotService.Add(timeSlot);
+            repository.Add(timeSlot);
         }
         catch (ArgumentException e)
         {
@@ -51,33 +53,33 @@ public class TimeSlotsController : ControllerBase
     [HttpPut()]
     public IActionResult Put(TimeSlot timeSlot)
     {
-        if (!timeSlotService.Exists(t => t.Id == timeSlot.Id))
+        if (!repository.Exists(t => t.Id == timeSlot.Id))
         {
             return NotFound();
         }
 
-        timeSlotService.Update(timeSlot);
+        repository.Update(timeSlot);
         return Ok();
     }
 
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        var timeSlot = timeSlotService.GetById(id);
+        var timeSlot = repository.GetById(id);
         if (timeSlot == null)
         {
             return NotFound();
         }
 
-        timeSlotService.Delete(timeSlot);
+        repository.Delete(timeSlot);
         return Ok();
     }
 
     [HttpGet("available")]
     public IActionResult GetAvailableTimeSlots([FromQuery] List<int> petIds)
     {
-        var pets = timeSlotService.GetPetsByIds(petIds);
-        var availableTimeSlots = timeSlotService.GetAvailableTimeSlots(pets);
-        return Ok(availableTimeSlots);
+        throw new NotImplementedException();
+        //var availableTimeSlots = repository.GetAll().Where(timeslot=>!timeslot.IsFull());
+        //return Ok(availableTimeSlots);
     }
 }

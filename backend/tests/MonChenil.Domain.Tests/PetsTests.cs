@@ -1,9 +1,9 @@
 namespace MonChenil.Domain.Tests
 {
-    public class UnitTest1
+    public class TimeSlotsTests
     {
         [Fact]
-        public void Test1()
+        public void PetsAreNotCompatible()
         {
 
         }
