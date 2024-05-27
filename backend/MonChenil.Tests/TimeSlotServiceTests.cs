@@ -1,7 +1,7 @@
 using System.Data.Common;
-using MonChenil.Entities;
-using MonChenil.Repositories;
-using MonChenil.Services;
+using MonChenil.Infrastructure.Entities;
+using MonChenil.Infrastructure.Repositories;
+using MonChenil.Domain.Services;
 
 namespace MonChenil.Tests
 {
