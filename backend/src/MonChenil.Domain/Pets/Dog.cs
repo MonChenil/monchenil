@@ -1,11 +1,8 @@
-﻿using MonChenil.Domain.Users;
-
-namespace MonChenil.Domain.Pets;
+﻿namespace MonChenil.Domain.Pets;
 
 public class Dog : Pet
 {
-    public Dog(string name, IApplicationUser owner) : base(name, owner)
+    public Dog(string name, string ownerId) : base(name, PetType.Dog, ownerId)
     {
-        Type = PetType.Dog;
     }
 }

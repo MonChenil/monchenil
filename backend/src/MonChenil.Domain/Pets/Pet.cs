@@ -1,17 +1,16 @@
-﻿using MonChenil.Domain.Users;
-
-namespace MonChenil.Domain.Pets;
+﻿namespace MonChenil.Domain.Pets;
 
 public abstract class Pet
 {
-    protected string Name;
-    protected PetType Type;
-    protected IApplicationUser Owner;
+    public string Name { get; }
+    public PetType Type { get; }
+    public string OwnerId { get; }
 
-    public Pet(string name, IApplicationUser owner)
+    public Pet(string name, PetType type, string ownerId)
     {
         Name = name;
-        Owner = owner;
+        Type = type;
+        OwnerId = ownerId;
     }
 }
 

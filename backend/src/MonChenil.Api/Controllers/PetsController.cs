@@ -1,4 +1,7 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MonChenil.Domain.Pets;
 using MonChenil.Infrastructure.Entities;
 using MonChenil.Infrastructure.Pets;
 using MonChenil.Infrastructure.Repositories;
@@ -10,10 +13,12 @@ namespace MonChenil.Controllers;
 public class PetsController : ControllerBase
 {
     private readonly IRepository<PetEntity> repository;
+    private readonly IPetsRepository petsRepository;
 
-    public PetsController(IRepository<PetEntity> repository)
+    public PetsController(IRepository<PetEntity> repository, IPetsRepository petsRepository)
     {
         this.repository = repository;
+        this.petsRepository = petsRepository;
     }
 
     [HttpGet]
@@ -35,11 +40,25 @@ public class PetsController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Post(PetEntity pet)
+    [Authorize]
+    public IActionResult Post(PetDto petDto)
     {
-        repository.Add(pet);
-        return CreatedAtAction(nameof(Get), new { id = pet.Id }, pet);
+        string? ownerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(ownerId))
+        {
+            return Unauthorized();
+        }
+
+        var pet = PetsFactory.CreatePet(petDto.Name, petDto.Type, ownerId);
+        if (pet == null)
+        {
+            return BadRequest();
+        }
+
+        petsRepository.AddPet(pet);
+        return Ok();
     }
+
 
     [HttpPut()]
     public IActionResult Put(PetEntity pet)

@@ -20,6 +20,7 @@ builder.Services.AddDefaultIdentity<ApplicationUser>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddApiEndpoints();
 
+builder.Services.AddScoped<IPetsRepository, PetsRepository>();
 builder.Services.AddScoped<IRepository<PetEntity>, EntityFrameworkRepository<PetEntity>>();
 builder.Services.AddScoped<IRepository<TimeSlot>, EntityFrameworkRepository<TimeSlot>>();
 builder.Services.AddControllers();
