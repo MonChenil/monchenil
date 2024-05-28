@@ -4,7 +4,7 @@ namespace MonChenil.Domain.Pets;
 
 public class Cat : Pet
 {
-    public Cat(string name, User owner) : base(name, owner)
+    public Cat(string name, IApplicationUser owner) : base(name, owner)
     {
         Type = PetType.Cat;
     }

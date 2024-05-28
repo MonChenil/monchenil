@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MonChenil.Infrastructure.Entities;
+using MonChenil.Infrastructure.Pets;
 using MonChenil.Infrastructure.Repositories;
 
 namespace MonChenil.Controllers;
@@ -8,9 +9,9 @@ namespace MonChenil.Controllers;
 [Route("[controller]")]
 public class PetsController : ControllerBase
 {
-    private readonly IRepository<Pet> repository;
+    private readonly IRepository<PetEntity> repository;
 
-    public PetsController(IRepository<Pet> repository)
+    public PetsController(IRepository<PetEntity> repository)
     {
         this.repository = repository;
     }
@@ -34,14 +35,14 @@ public class PetsController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Post(Pet pet)
+    public IActionResult Post(PetEntity pet)
     {
         repository.Add(pet);
         return CreatedAtAction(nameof(Get), new { id = pet.Id }, pet);
     }
 
     [HttpPut()]
-    public IActionResult Put(Pet pet)
+    public IActionResult Put(PetEntity pet)
     {
         if (!repository.Exists(p => p.Id == pet.Id))
         {

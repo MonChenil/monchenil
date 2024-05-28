@@ -6,9 +6,9 @@ public abstract class Pet
 {
     protected string Name;
     protected PetType Type;
-    protected User Owner;
+    protected IApplicationUser Owner;
 
-    public Pet(string name, User owner)
+    public Pet(string name, IApplicationUser owner)
     {
         Name = name;
         Owner = owner;
