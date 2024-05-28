@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
+using MonChenil.Domain.Pets;
 
-namespace MonChenil.Domain.Models;
+namespace MonChenil.Domain.Users;
 
 public class User : IdentityUser
 {
