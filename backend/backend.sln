@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonChenil.Tests", "MonChenil.Tests\MonChenil.Tests.csproj", "{D35BCF0B-B761-417E-8FED-3A1B367809A7}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonChenil.Domain", "src\MonChenil.Domain\MonChenil.Domain.csproj", "{C4B0A950-9B38-4461-BDC6-9090FCE5425E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MonChenil.Api", "src\MonChenil.Api\MonChenil.Api.csproj", "{908DAA08-7FF6-4F95-95F3-316F5A1D5777}"
