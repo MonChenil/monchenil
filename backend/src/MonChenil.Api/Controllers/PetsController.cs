@@ -2,7 +2,6 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MonChenil.Domain.Pets;
-using MonChenil.Infrastructure.Pets;
 
 namespace MonChenil.Controllers;
 

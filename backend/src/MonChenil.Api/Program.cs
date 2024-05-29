@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MonChenil.Data;
 using MonChenil.Domain.Models;
+using MonChenil.Domain.Pets;
 using MonChenil.Infrastructure.Pets;
 using MonChenil.Infrastructure.Repositories;
 using MonChenil.Infrastructure.Users;

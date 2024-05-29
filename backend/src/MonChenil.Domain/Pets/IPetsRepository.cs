@@ -1,6 +1,4 @@
-﻿using MonChenil.Domain.Pets;
-
-namespace MonChenil.Infrastructure.Pets;
+﻿namespace MonChenil.Domain.Pets;
 
 public interface IPetsRepository
 {
