@@ -29,16 +29,16 @@ public class ReservationsController : ControllerBase
     [HttpGet]
     public IActionResult GetCurrentUserReservations()
     {
-        string ownerId = GetCurrentUserId();
-        return Ok(reservationsRepository.GetReservations().Where(reservation => reservation.OwnerId == ownerId));
+        string currentUserId = GetCurrentUserId();
+        return Ok(reservationsRepository.GetReservationsByOwnerId(currentUserId));
     }
 
     [HttpPost]
     public IActionResult CreateReservation(CreateReservationRequest request)
     {
-        string ownerId = GetCurrentUserId();
+        string currentUserId = GetCurrentUserId();
         var reservationId = new ReservationId(Guid.NewGuid());
-        var reservation = new Reservation(reservationId, ownerId, request.StartDate, request.EndDate);
+        var reservation = new Reservation(reservationId, currentUserId, request.StartDate, request.EndDate);
         var pets = petsRepository.GetPetsByIds(request.PetIds);
         reservation.AddPets(pets);
 
@@ -49,12 +49,17 @@ public class ReservationsController : ControllerBase
     [HttpDelete("{id:guid}")]
     public IActionResult DeleteReservation(Guid id)
     {
-        string ownerId = GetCurrentUserId();
-        ReservationId reservationId = new ReservationId(id);
-        var reservation = reservationsRepository.GetReservations().FirstOrDefault(reservation => reservation.Id == reservationId && reservation.OwnerId == ownerId);
+        string currentUserId = GetCurrentUserId();
+        ReservationId reservationId = new(id);
+        var reservation = reservationsRepository.GetReservationById(reservationId);
         if (reservation == null)
         {
             return NotFound();
+        }
+
+        if (reservation.OwnerId != currentUserId)
+        {
+            return Forbid();
         }
 
         reservationsRepository.DeleteReservation(reservation);
