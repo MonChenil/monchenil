@@ -33,7 +33,7 @@ public class PetsController : ControllerBase
     public IActionResult CreatePet(PetDto petDto)
     {
         string ownerId = GetCurrentUserId();
-        var pet = PetsFactory.CreatePet(petDto.Id, petDto.Name, petDto.Type, ownerId);
+        var pet = PetsFactory.CreatePet(petDto, ownerId);
         if (pet == null)
         {
             return BadRequest();
