@@ -2,54 +2,39 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MonChenil.Domain.Pets;
-using MonChenil.Infrastructure.Entities;
 using MonChenil.Infrastructure.Pets;
-using MonChenil.Infrastructure.Repositories;
 
 namespace MonChenil.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize]
 public class PetsController : ControllerBase
 {
-    private readonly IRepository<PetEntity> repository;
     private readonly IPetsRepository petsRepository;
 
-    public PetsController(IRepository<PetEntity> repository, IPetsRepository petsRepository)
+    public PetsController(IPetsRepository petsRepository)
     {
-        this.repository = repository;
         this.petsRepository = petsRepository;
     }
 
-    [HttpGet]
-    public IActionResult Get()
+    private string  GetCurrentUserId()
     {
-        return Ok(repository.GetAll());
+        return User.FindFirstValue(ClaimTypes.NameIdentifier)!;
     }
 
-    [HttpGet("{id}")]
-    public IActionResult Get(int id)
+    [HttpGet]
+    public IActionResult GetCurrentUserPets()
     {
-        var pet = repository.GetById(id);
-        if (pet == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(pet);
+        string ownerId = GetCurrentUserId();
+        return Ok(petsRepository.GetPets().Where(pet => pet.OwnerId == ownerId));
     }
 
     [HttpPost]
-    [Authorize]
-    public IActionResult Post(PetDto petDto)
+    public IActionResult CreatePet(PetDto petDto)
     {
-        string? ownerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(ownerId))
-        {
-            return Unauthorized();
-        }
-
-        var pet = PetsFactory.CreatePet(petDto.Name, petDto.Type, ownerId);
+        string ownerId = GetCurrentUserId();
+        var pet = PetsFactory.CreatePet(petDto.Id, petDto.Name, petDto.Type, ownerId);
         if (pet == null)
         {
             return BadRequest();
@@ -59,29 +44,18 @@ public class PetsController : ControllerBase
         return Ok();
     }
 
-
-    [HttpPut()]
-    public IActionResult Put(PetEntity pet)
-    {
-        if (!repository.Exists(p => p.Id == pet.Id))
-        {
-            return NotFound();
-        }
-
-        repository.Update(pet);
-        return Ok();
-    }
-
     [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
+    public IActionResult DeletePet(string id)
     {
-        var pet = repository.GetById(id);
+        string ownerId = GetCurrentUserId();
+        PetId petId = new PetId(id);
+        var pet = petsRepository.GetPets().FirstOrDefault(pet => pet.Id == petId && pet.OwnerId == ownerId);
         if (pet == null)
         {
             return NotFound();
         }
 
-        repository.Delete(pet);
+        petsRepository.DeletePet(pet);
         return Ok();
     }
 }

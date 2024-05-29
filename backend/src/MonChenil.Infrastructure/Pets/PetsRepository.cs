@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
-using MonChenil.Data;
+﻿using MonChenil.Data;
 using MonChenil.Domain.Pets;
-using MonChenil.Infrastructure.Users;
 
 namespace MonChenil.Infrastructure.Pets;
 
@@ -13,16 +11,20 @@ public class PetsRepository : IPetsRepository
         _dbContext = dbContext;
     }
 
+    public IEnumerable<Pet> GetPets()
+    {
+        return _dbContext.Pets.Select(pet => PetsFactory.CreatePet(pet.Id, pet.Name, pet.Type, pet.OwnerId));
+    }
+
     public void AddPet(Pet pet)
     {
-        var petEntity = new PetEntity
-        {
-            Name = pet.Name,
-            Type = pet.Type,
-            OwnerId = pet.OwnerId
-        };
+        _dbContext.Pets.Add(pet);
+        _dbContext.SaveChanges();
+    }
 
-        _dbContext.Pets.Add(petEntity);
+    public void DeletePet(Pet pet)
+    {
+        _dbContext.Pets.Remove(pet);
         _dbContext.SaveChanges();
     }
 }

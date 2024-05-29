@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MonChenil.Data;
 
@@ -10,9 +11,11 @@ using MonChenil.Data;
 namespace MonChenil.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240529100827_AddPetOwnerId")]
+    partial class AddPetOwnerId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
@@ -149,38 +152,6 @@ namespace MonChenil.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("MonChenil.Domain.Pets.Pet", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("OwnerId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("TimeSlotId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OwnerId");
-
-                    b.HasIndex("TimeSlotId");
-
-                    b.ToTable("Pets", (string)null);
-
-                    b.HasDiscriminator<int>("Type");
-
-                    b.UseTphMappingStrategy();
-                });
-
             modelBuilder.Entity("MonChenil.Infrastructure.Entities.TimeSlot", b =>
                 {
                     b.Property<int>("Id")
@@ -196,6 +167,34 @@ namespace MonChenil.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TimeSlots");
+                });
+
+            modelBuilder.Entity("MonChenil.Infrastructure.Pets.PetEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("IncompatibleTypes")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OwnerId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("Pets");
                 });
 
             modelBuilder.Entity("MonChenil.Infrastructure.Users.ApplicationUser", b =>
@@ -262,18 +261,19 @@ namespace MonChenil.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("MonChenil.Domain.Pets.Cat", b =>
+            modelBuilder.Entity("PetEntityTimeSlot", b =>
                 {
-                    b.HasBaseType("MonChenil.Domain.Pets.Pet");
+                    b.Property<int>("PetsId")
+                        .HasColumnType("INTEGER");
 
-                    b.HasDiscriminator().HasValue(1);
-                });
+                    b.Property<int>("TimeSlotsId")
+                        .HasColumnType("INTEGER");
 
-            modelBuilder.Entity("MonChenil.Domain.Pets.Dog", b =>
-                {
-                    b.HasBaseType("MonChenil.Domain.Pets.Pet");
+                    b.HasKey("PetsId", "TimeSlotsId");
 
-                    b.HasDiscriminator().HasValue(0);
+                    b.HasIndex("TimeSlotsId");
+
+                    b.ToTable("PetEntityTimeSlot");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -327,22 +327,28 @@ namespace MonChenil.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MonChenil.Domain.Pets.Pet", b =>
+            modelBuilder.Entity("MonChenil.Infrastructure.Pets.PetEntity", b =>
                 {
                     b.HasOne("MonChenil.Infrastructure.Users.ApplicationUser", null)
                         .WithMany("Pets")
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("MonChenil.Infrastructure.Entities.TimeSlot", null)
-                        .WithMany("Pets")
-                        .HasForeignKey("TimeSlotId");
                 });
 
-            modelBuilder.Entity("MonChenil.Infrastructure.Entities.TimeSlot", b =>
+            modelBuilder.Entity("PetEntityTimeSlot", b =>
                 {
-                    b.Navigation("Pets");
+                    b.HasOne("MonChenil.Infrastructure.Pets.PetEntity", null)
+                        .WithMany()
+                        .HasForeignKey("PetsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MonChenil.Infrastructure.Entities.TimeSlot", null)
+                        .WithMany()
+                        .HasForeignKey("TimeSlotsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MonChenil.Infrastructure.Users.ApplicationUser", b =>

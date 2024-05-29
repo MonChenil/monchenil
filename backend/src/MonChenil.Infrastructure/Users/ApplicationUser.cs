@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Identity;
-using MonChenil.Infrastructure.Pets;
+using MonChenil.Domain.Pets;
 
 namespace MonChenil.Infrastructure.Users;
 
 public class ApplicationUser : IdentityUser
 {
-    public List<PetEntity> Pets { get; set; } = [];
+    public List<Pet> Pets { get; set; } = [];
 }

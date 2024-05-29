@@ -2,7 +2,7 @@
 
 public class Cat : Pet
 {
-    public Cat(string name, string ownerId) : base(name, PetType.Cat, ownerId)
+    public Cat(PetId id, string name, string ownerId) : base(id, name, PetType.Cat, ownerId)
     {
     }
 }
