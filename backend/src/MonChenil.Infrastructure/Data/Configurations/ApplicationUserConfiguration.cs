@@ -10,9 +10,15 @@ public class ApplicationUserConfiguration : IEntityTypeConfiguration<Application
     public void Configure(EntityTypeBuilder<ApplicationUser> builder)
     {
         builder.HasKey(user => user.Id);
+        
         builder.HasMany(user => user.Pets)
             .WithOne()
             .HasForeignKey(pet => pet.OwnerId)
+            .IsRequired();
+
+        builder.HasMany(user => user.Reservations)
+            .WithOne()
+            .HasForeignKey(reservation => reservation.OwnerId)
             .IsRequired();
     }
 }
