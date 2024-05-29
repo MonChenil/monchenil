@@ -16,6 +16,11 @@ public class PetsRepository : IPetsRepository
         return _dbContext.Pets;
     }
 
+    public IEnumerable<Pet> GetPetsByIds(IEnumerable<PetId> petIds)
+    {
+        return _dbContext.Pets.Where(pet => petIds.Contains(pet.Id));
+    }
+
     public void AddPet(Pet pet)
     {
         _dbContext.Pets.Add(pet);

@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MonChenil.Api.Requests;
 using MonChenil.Domain.Pets;
 using MonChenil.Domain.Reservations;
 
@@ -33,13 +34,12 @@ public class ReservationsController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult CreateReservation(ReservationDto reservationDto)
+    public IActionResult CreateReservation(CreateReservationRequest request)
     {
         string ownerId = GetCurrentUserId();
         var reservationId = new ReservationId(Guid.NewGuid());
-        var reservation = new Reservation(reservationId, ownerId, reservationDto.StartDate, reservationDto.EndDate);
-
-        List<Pet> pets = petsRepository.GetPets().Where(pet => reservationDto.PetIds.Contains(pet.Id)).ToList();
+        var reservation = new Reservation(reservationId, ownerId, request.StartDate, request.EndDate);
+        var pets = petsRepository.GetPetsByIds(request.PetIds);
         reservation.AddPets(pets);
 
         reservationsRepository.AddReservation(reservation);

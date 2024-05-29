@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MonChenil.Api.Requests;
 using MonChenil.Domain.Pets;
 
 namespace MonChenil.Controllers;
@@ -17,7 +18,7 @@ public class PetsController : ControllerBase
         this.petsRepository = petsRepository;
     }
 
-    private string  GetCurrentUserId()
+    private string GetCurrentUserId()
     {
         return User.FindFirstValue(ClaimTypes.NameIdentifier)!;
     }
@@ -30,10 +31,10 @@ public class PetsController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult CreatePet(PetDto petDto)
+    public IActionResult CreatePet(CreatePetRequest request)
     {
         string ownerId = GetCurrentUserId();
-        var pet = PetsFactory.CreatePet(petDto, ownerId);
+        var pet = PetsFactory.CreatePet(request.Id, request.Name, request.Type, ownerId);
         if (pet == null)
         {
             return BadRequest();
