@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MonChenil.Domain.Pets;
-using MonChenil.Infrastructure.Entities;
+using MonChenil.Domain.Reservations;
 using MonChenil.Infrastructure.Users;
 
 namespace MonChenil.Data;
@@ -9,7 +9,7 @@ namespace MonChenil.Data;
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 {
     public DbSet<Pet> Pets { get; set; }
-    public DbSet<TimeSlot> TimeSlots { get; set; }
+    public DbSet<Reservation> Reservations { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)

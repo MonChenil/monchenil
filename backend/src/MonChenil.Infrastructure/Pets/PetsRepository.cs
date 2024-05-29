@@ -13,7 +13,7 @@ public class PetsRepository : IPetsRepository
 
     public IEnumerable<Pet> GetPets()
     {
-        return _dbContext.Pets.Select(pet => PetsFactory.CreatePet(pet.Id, pet.Name, pet.Type, pet.OwnerId));
+        return _dbContext.Pets;
     }
 
     public void AddPet(Pet pet)

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MonChenil.Data;
 
@@ -10,9 +11,11 @@ using MonChenil.Data;
 namespace MonChenil.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240529150241_AddReservations")]
+    partial class AddReservations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.3");
@@ -267,12 +270,12 @@ namespace MonChenil.Data.Migrations
                     b.Property<string>("PetsId")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("ReservationId")
+                    b.Property<Guid>("ReservationsId")
                         .HasColumnType("TEXT");
 
-                    b.HasKey("PetsId", "ReservationId");
+                    b.HasKey("PetsId", "ReservationsId");
 
-                    b.HasIndex("ReservationId");
+                    b.HasIndex("ReservationsId");
 
                     b.ToTable("PetReservation");
                 });
@@ -370,7 +373,7 @@ namespace MonChenil.Data.Migrations
 
                     b.HasOne("MonChenil.Domain.Reservations.Reservation", null)
                         .WithMany()
-                        .HasForeignKey("ReservationId")
+                        .HasForeignKey("ReservationsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

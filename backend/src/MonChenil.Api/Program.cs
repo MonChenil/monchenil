@@ -2,10 +2,10 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MonChenil.Data;
-using MonChenil.Domain.Models;
 using MonChenil.Domain.Pets;
+using MonChenil.Domain.Reservations;
 using MonChenil.Infrastructure.Pets;
-using MonChenil.Infrastructure.Repositories;
+using MonChenil.Infrastructure.Reservations;
 using MonChenil.Infrastructure.Users;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,7 +22,7 @@ builder.Services.AddDefaultIdentity<ApplicationUser>()
     .AddApiEndpoints();
 
 builder.Services.AddScoped<IPetsRepository, PetsRepository>();
-builder.Services.AddScoped<IRepository<TimeSlot>, EntityFrameworkRepository<TimeSlot>>();
+builder.Services.AddScoped<IReservationsRepository, ReservationsRepository>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
