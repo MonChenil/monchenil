@@ -26,15 +26,15 @@ public class PetsController : ControllerBase
     [HttpGet]
     public IActionResult GetCurrentUserPets()
     {
-        string ownerId = GetCurrentUserId();
-        return Ok(petsRepository.GetPets().Where(pet => pet.OwnerId == ownerId));
+        string currentUserId = GetCurrentUserId();
+        return Ok(petsRepository.GetPetsByOwnerId(currentUserId));
     }
 
     [HttpPost]
     public IActionResult CreatePet(CreatePetRequest request)
     {
-        string ownerId = GetCurrentUserId();
-        var pet = PetsFactory.CreatePet(request.Id, request.Name, request.Type, ownerId);
+        string currentUserId = GetCurrentUserId();
+        var pet = PetsFactory.CreatePet(request.Id, request.Name, request.Type, currentUserId);
         if (pet == null)
         {
             return BadRequest();
@@ -47,12 +47,17 @@ public class PetsController : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult DeletePet(string id)
     {
-        string ownerId = GetCurrentUserId();
+        string currentUserId = GetCurrentUserId();
         PetId petId = new PetId(id);
-        var pet = petsRepository.GetPets().FirstOrDefault(pet => pet.Id == petId && pet.OwnerId == ownerId);
+        var pet = petsRepository.GetPetById(petId);
         if (pet == null)
         {
             return NotFound();
+        }
+
+        if (pet.OwnerId != currentUserId)
+        {
+            return Forbid();
         }
 
         petsRepository.DeletePet(pet);

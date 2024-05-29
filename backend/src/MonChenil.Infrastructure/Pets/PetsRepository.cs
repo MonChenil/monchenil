@@ -21,6 +21,16 @@ public class PetsRepository : IPetsRepository
         return _dbContext.Pets.Where(pet => petIds.Contains(pet.Id));
     }
 
+    public IEnumerable<Pet> GetPetsByOwnerId(string ownerId)
+    {
+        return _dbContext.Pets.Where(pet => pet.OwnerId == ownerId);
+    }
+
+    public Pet? GetPetById(PetId petId)
+    {
+        return _dbContext.Pets.FirstOrDefault(pet => pet.Id == petId);
+    }
+
     public void AddPet(Pet pet)
     {
         _dbContext.Pets.Add(pet);
