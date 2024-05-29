@@ -18,7 +18,7 @@ public class Reservation
         EndDate = endDate;
     }
 
-    public void AddPets(List<Pet> pets)
+    public void AddPets(IEnumerable<Pet> pets)
     {
         Pets.AddRange(pets);
     }

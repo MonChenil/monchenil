@@ -18,6 +18,20 @@ public class ReservationsRepository : IReservationsRepository
         return _dbContext.Reservations.Include(reservation => reservation.Pets);
     }
 
+    public IEnumerable<Reservation> GetReservationsByOwnerId(string ownerId)
+    {
+        return _dbContext.Reservations
+            .Where(reservation => reservation.OwnerId == ownerId)
+            .Include(reservation => reservation.Pets);
+    }
+
+    public Reservation? GetReservationById(ReservationId reservationId)
+    {
+        return _dbContext.Reservations
+            .Include(reservation => reservation.Pets)
+            .FirstOrDefault(reservation => reservation.Id == reservationId);
+    }
+
     public void AddReservation(Reservation reservation)
     {
         _dbContext.Reservations.Add(reservation);

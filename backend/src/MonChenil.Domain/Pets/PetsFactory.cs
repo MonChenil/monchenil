@@ -2,12 +2,12 @@
 
 public class PetsFactory
 {
-    public static Pet CreatePet(PetDto petDto, string ownerId)
+    public static Pet CreatePet(PetId id, string name, PetType type, string ownerId)
     {
-        return petDto.Type switch
+        return type switch
         {
-            PetType.Cat => new Cat(petDto.Id, petDto.Name, ownerId),
-            PetType.Dog => new Dog(petDto.Id, petDto.Name, ownerId),
+            PetType.Cat => new Cat(id, name, ownerId),
+            PetType.Dog => new Dog(id, name, ownerId),
             _ => throw new ArgumentException("Invalid pet type")
         };
     }

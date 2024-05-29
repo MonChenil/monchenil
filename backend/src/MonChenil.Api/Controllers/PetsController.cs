@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MonChenil.Api.Requests;
 using MonChenil.Domain.Pets;
 
 namespace MonChenil.Controllers;
@@ -17,7 +18,7 @@ public class PetsController : ControllerBase
         this.petsRepository = petsRepository;
     }
 
-    private string  GetCurrentUserId()
+    private string GetCurrentUserId()
     {
         return User.FindFirstValue(ClaimTypes.NameIdentifier)!;
     }
@@ -25,15 +26,15 @@ public class PetsController : ControllerBase
     [HttpGet]
     public IActionResult GetCurrentUserPets()
     {
-        string ownerId = GetCurrentUserId();
-        return Ok(petsRepository.GetPets().Where(pet => pet.OwnerId == ownerId));
+        string currentUserId = GetCurrentUserId();
+        return Ok(petsRepository.GetPetsByOwnerId(currentUserId));
     }
 
     [HttpPost]
-    public IActionResult CreatePet(PetDto petDto)
+    public IActionResult CreatePet(CreatePetRequest request)
     {
-        string ownerId = GetCurrentUserId();
-        var pet = PetsFactory.CreatePet(petDto, ownerId);
+        string currentUserId = GetCurrentUserId();
+        var pet = PetsFactory.CreatePet(request.Id, request.Name, request.Type, currentUserId);
         if (pet == null)
         {
             return BadRequest();
@@ -46,12 +47,17 @@ public class PetsController : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult DeletePet(string id)
     {
-        string ownerId = GetCurrentUserId();
+        string currentUserId = GetCurrentUserId();
         PetId petId = new PetId(id);
-        var pet = petsRepository.GetPets().FirstOrDefault(pet => pet.Id == petId && pet.OwnerId == ownerId);
+        var pet = petsRepository.GetPetById(petId);
         if (pet == null)
         {
             return NotFound();
+        }
+
+        if (pet.OwnerId != currentUserId)
+        {
+            return Forbid();
         }
 
         petsRepository.DeletePet(pet);
