@@ -1,3 +1,5 @@
+using MonChenil.Domain.Pets;
+
 namespace MonChenil.Infrastructure.Entities;
 
 public class TimeSlot : IEntity

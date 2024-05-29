@@ -1,67 +1,60 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MonChenil.Infrastructure.Entities;
-using MonChenil.Infrastructure.Repositories;
+using MonChenil.Domain.Pets;
 
 namespace MonChenil.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize]
 public class PetsController : ControllerBase
 {
-    private readonly IRepository<Pet> repository;
+    private readonly IPetsRepository petsRepository;
 
-    public PetsController(IRepository<Pet> repository)
+    public PetsController(IPetsRepository petsRepository)
     {
-        this.repository = repository;
+        this.petsRepository = petsRepository;
+    }
+
+    private string  GetCurrentUserId()
+    {
+        return User.FindFirstValue(ClaimTypes.NameIdentifier)!;
     }
 
     [HttpGet]
-    public IActionResult Get()
+    public IActionResult GetCurrentUserPets()
     {
-        return Ok(repository.GetAll());
-    }
-
-    [HttpGet("{id}")]
-    public IActionResult Get(int id)
-    {
-        var pet = repository.GetById(id);
-        if (pet == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(pet);
+        string ownerId = GetCurrentUserId();
+        return Ok(petsRepository.GetPets().Where(pet => pet.OwnerId == ownerId));
     }
 
     [HttpPost]
-    public IActionResult Post(Pet pet)
+    public IActionResult CreatePet(PetDto petDto)
     {
-        repository.Add(pet);
-        return CreatedAtAction(nameof(Get), new { id = pet.Id }, pet);
-    }
-
-    [HttpPut()]
-    public IActionResult Put(Pet pet)
-    {
-        if (!repository.Exists(p => p.Id == pet.Id))
+        string ownerId = GetCurrentUserId();
+        var pet = PetsFactory.CreatePet(petDto.Id, petDto.Name, petDto.Type, ownerId);
+        if (pet == null)
         {
-            return NotFound();
+            return BadRequest();
         }
 
-        repository.Update(pet);
+        petsRepository.AddPet(pet);
         return Ok();
     }
 
     [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
+    public IActionResult DeletePet(string id)
     {
-        var pet = repository.GetById(id);
+        string ownerId = GetCurrentUserId();
+        PetId petId = new PetId(id);
+        var pet = petsRepository.GetPets().FirstOrDefault(pet => pet.Id == petId && pet.OwnerId == ownerId);
         if (pet == null)
         {
             return NotFound();
         }
 
-        repository.Delete(pet);
+        petsRepository.DeletePet(pet);
         return Ok();
     }
 }

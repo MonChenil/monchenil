@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MonChenil.Data;
 using MonChenil.Domain.Models;
+using MonChenil.Domain.Pets;
+using MonChenil.Infrastructure.Pets;
 using MonChenil.Infrastructure.Repositories;
+using MonChenil.Infrastructure.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,11 +17,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // Authentication
-builder.Services.AddDefaultIdentity<User>()
+builder.Services.AddDefaultIdentity<ApplicationUser>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddApiEndpoints();
 
-builder.Services.AddScoped<IRepository<Pet>, EntityFrameworkRepository<Pet>>();
+builder.Services.AddScoped<IPetsRepository, PetsRepository>();
 builder.Services.AddScoped<IRepository<TimeSlot>, EntityFrameworkRepository<TimeSlot>>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -32,24 +35,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Example of a protected endpoint: Load the current user's information
-app.MapGet("/me", async (ClaimsPrincipal claims, ApplicationDbContext db) =>
-{
-    string? userId = claims.FindFirstValue(ClaimTypes.NameIdentifier);
-    if (userId == null)
-    {
-        return Results.Unauthorized();
-    }
-
-    var user = await db.Users.FindAsync(userId);
-    if (user == null)
-    {
-        return Results.NotFound();
-    }
-
-    return Results.Ok(user);
-}).RequireAuthorization();
-
 // Route to check if the user is authenticated
 app.MapGet("/is-authenticated", (ClaimsPrincipal claims) =>
 {
@@ -57,7 +42,7 @@ app.MapGet("/is-authenticated", (ClaimsPrincipal claims) =>
 });
 
 // Route to logout
-app.MapPost("/logout", async (SignInManager<User> signInManager) =>
+app.MapPost("/logout", async (SignInManager<ApplicationUser> signInManager) =>
 {
     await signInManager.SignOutAsync();
     return Results.Ok();
@@ -65,7 +50,7 @@ app.MapPost("/logout", async (SignInManager<User> signInManager) =>
 
 app.UseHttpsRedirection();
 
-app.MapIdentityApi<User>();
+app.MapIdentityApi<ApplicationUser>();
 app.MapControllers();
 
 app.UseAuthorization();
