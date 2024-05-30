@@ -22,4 +22,9 @@ public class Reservation
     {
         Pets.AddRange(pets);
     }
+
+    public bool Overlaps(DateTime startDate, DateTime endDate)
+    {
+        return StartDate < endDate && EndDate > startDate;
+    }
 }

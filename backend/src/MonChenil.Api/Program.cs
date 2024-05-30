@@ -24,6 +24,7 @@ builder.Services.AddDefaultIdentity<ApplicationUser>()
 
 builder.Services.AddScoped<IPetsRepository, PetsRepository>();
 builder.Services.AddScoped<IReservationsRepository, ReservationsRepository>();
+builder.Services.AddScoped<IReservationTimes, ReservationTimes>();
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add(new PetIdExceptionFilter());
