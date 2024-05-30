@@ -1,7 +1,0 @@
-<div class="flex gap-8 max-lg:flex-col-reverse">
-  <timeslots-list
-    [timeSlots]="timeSlots$ | async"
-    (timeSlotDeleted)="refresh()"
-  ></timeslots-list>
-  <timeslots-add (timeSlotAdded)="refresh()"></timeslots-add>
-</div>

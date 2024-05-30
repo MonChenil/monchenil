@@ -32,7 +32,6 @@
         (click)="closeDropdown()"
       >
         @if (isAuthenticated$ | async) {
-          <li><a routerLink="/timeslots/admin">Gérer les créneaux</a></li>
           <li><a routerLink="/pets">Mes animaux</a></li>
           <li><a routerLink="/auth/logout">Se déconnecter</a></li>
         } @else {

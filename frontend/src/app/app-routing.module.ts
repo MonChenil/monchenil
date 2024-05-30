@@ -6,16 +6,11 @@ import { PetsPageComponent } from './pets/pages/pets-page/pets-page.component';
 const routes: Routes = [
   {
     path: 'dashboard',
-    component: DashboardComponent
+    component: DashboardComponent,
   },
   {
     path: 'auth',
     loadChildren: () => import('./auth/auth.module').then((m) => m.AuthModule),
-  },
-  {
-    path: 'timeslots',
-    loadChildren: () =>
-      import('./timeslots/timeslots.module').then((m) => m.TimeSlotsModule),
   },
   {
     path: 'pets',
