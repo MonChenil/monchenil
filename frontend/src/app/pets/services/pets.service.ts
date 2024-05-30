@@ -1,22 +1,21 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { NullablePartial } from '../../shared/shared.types';
-import { Pet } from '../models/pet';
 import { environment } from '../../../environments/environment';
+import { Pet } from '../models/pet';
 
 @Injectable()
 export class PetsService {
   constructor(private http: HttpClient) {}
 
-  create(pet: NullablePartial<Pet>) {
+  createPet(pet: Pet) {
     return this.http.post(environment.backendPets, pet);
   }
 
-  delete(id: number) {
+  deletePet(id: string) {
     return this.http.delete(`${environment.backendPets}/${id}`);
   }
 
-  getAll() {
+  getCurrentUserPets() {
     return this.http.get<Pet[]>(environment.backendPets);
   }
 }

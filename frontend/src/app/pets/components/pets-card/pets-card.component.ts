@@ -9,13 +9,16 @@ import { PetsService } from '../../services/pets.service';
 export class PetsCardComponent {
   constructor(private petsService: PetsService) {}
 
-  petTypes = ['Chat', 'Chien']; // Order is important. Must match backend/MonChenil/Entities/Pet.cs
-  petIcons = ['🐱', '🐶'];
+  petTypes = ['Chien', 'Chat']; // Order is important. Must match backend/src/MonChenil.Domain/Pets/PetType.cs
+  petIcons = ['🐶', '🐱'];
 
   @Input() declare pet: Pet;
   @Output() petDeleted = new EventEmitter();
 
   deletePet(pet: Pet) {
-    this.petsService.delete(pet.id).subscribe(() => this.petDeleted.emit(pet));
+    console.log('deletePet', pet);
+    this.petsService
+      .deletePet(pet.id.value)
+      .subscribe(() => this.petDeleted.emit(pet));
   }
 }

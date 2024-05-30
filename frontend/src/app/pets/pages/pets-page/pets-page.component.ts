@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { PetsService } from '../../services/pets.service';
 import { BehaviorSubject, switchMap } from 'rxjs';
+import { PetsService } from '../../services/pets.service';
 
 @Component({
   selector: 'app-pets-page',
@@ -11,7 +11,7 @@ export class PetsPageComponent {
 
   refresh$ = new BehaviorSubject(null);
   pets$ = this.refresh$.pipe(
-    switchMap(() => this.petsService.getAll())
+    switchMap(() => this.petsService.getCurrentUserPets()),
   );
 
   refresh() {

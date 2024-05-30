@@ -1,6 +1,7 @@
 export type Pet = {
-  id: number;
+  id: {
+    value: string;
+  }
   name: string;
   type: number;
-  incompatibleTypes: number[];
 };
