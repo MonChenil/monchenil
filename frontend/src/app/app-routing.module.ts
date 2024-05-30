@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { PetsPageComponent } from './pets/pages/pets-page/pets-page.component';
+import { ReservationsPageComponent } from './reservations/pages/reservations-page.component';
 
 const routes: Routes = [
   {
@@ -15,6 +16,10 @@ const routes: Routes = [
   {
     path: 'pets',
     component: PetsPageComponent,
+  },
+  {
+    path: 'reservations',
+    component: ReservationsPageComponent,
   },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: '**', redirectTo: 'dashboard' },

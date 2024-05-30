@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Pet } from '../../models/pet';
-import { PetsService } from '../../services/pets.service';
+import { Pet } from '../../../../pets/models/pet';
+import { PetsService } from '../../../../pets/services/pets.service';
 
 @Component({
   selector: 'pets-card',
