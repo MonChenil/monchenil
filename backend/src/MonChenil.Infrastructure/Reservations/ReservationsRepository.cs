@@ -18,6 +18,14 @@ public class ReservationsRepository : IReservationsRepository
         return _dbContext.Reservations.Include(reservation => reservation.Pets);
     }
 
+    public IEnumerable<Reservation> GetOverlappingReservations(DateTime startDate, DateTime endDate)
+    {
+        return _dbContext.Reservations
+            .Include(reservation => reservation.Pets)
+            .AsEnumerable()
+            .Where(reservation => reservation.Overlaps(startDate, endDate));
+    }
+
     public IEnumerable<Reservation> GetReservationsByOwnerId(string ownerId)
     {
         return _dbContext.Reservations
