@@ -4,6 +4,5 @@ export const environment = {
   backendLogout: '/api/logout',
   backendRegister: '/api/register',
   backendIsAuthenticated: '/api/is-authenticated',
-  backendTimeSlots: '/api/timeslots',
   backendPets: '/api/pets',
 };
