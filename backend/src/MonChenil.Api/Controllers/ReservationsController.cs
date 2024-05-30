@@ -38,7 +38,17 @@ public class ReservationsController : ControllerBase
     {
         string currentUserId = GetCurrentUserId();
         var reservationId = new ReservationId(Guid.NewGuid());
-        var reservation = new Reservation(reservationId, currentUserId, request.StartDate, request.EndDate);
+        Reservation reservation;
+        try
+        {
+            reservation = new Reservation(reservationId, currentUserId, request.StartDate, request.EndDate);
+
+        }
+        catch (ArgumentException ex)
+        {
+            return new BadRequestObjectResult(ex);
+        }
+        
         var pets = petsRepository.GetPetsByIds(request.PetIds);
         reservation.AddPets(pets);
 
