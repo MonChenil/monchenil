@@ -1,0 +1,6 @@
+<div class="flex flex-col items-center">
+    <h2 class="mb-4 text-xl font-bold">Sélectionnez vos animaux</h2>
+    <div class="flex flex-col space-y-2">
+        <pets-list [pets]="pets$ | async"></pets-list>
+    </div>
+</div>
