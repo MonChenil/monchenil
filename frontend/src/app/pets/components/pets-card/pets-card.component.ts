@@ -16,7 +16,6 @@ export class PetsCardComponent {
   @Output() petDeleted = new EventEmitter();
 
   deletePet(pet: Pet) {
-    console.log('deletePet', pet);
     this.petsService
       .deletePet(pet.id.value)
       .subscribe(() => this.petDeleted.emit(pet));
