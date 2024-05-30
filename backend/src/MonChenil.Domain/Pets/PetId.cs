@@ -1,3 +1,19 @@
-﻿namespace MonChenil.Domain.Pets;
+﻿using System.Text.RegularExpressions;
 
-public record PetId(string Value);
+namespace MonChenil.Domain.Pets;
+
+public record PetId
+{
+    private static Regex PetIdRegex() => new(@"^\d{15}$");
+    public string Value { get; }
+
+    public PetId(string value)
+    {
+        if (!PetIdRegex().IsMatch(value))
+        {
+            throw new PetIdException();
+        }
+
+        Value = value;
+    }
+}
