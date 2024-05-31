@@ -1,3 +1,7 @@
-<main>
-    <select-pets></select-pets>
-</main>
+<form [formGroup]="reservationForm" (ngSubmit)="onSubmit()" class="flex">
+    <main class="flex min-h-screen flex-row items-center justify-center gap-6 bg-base-200">
+        <select-pets [control]="$any(reservationForm).get('pets')"></select-pets>
+        <select-start-date [control]="$any(reservationForm).get('startDate')"></select-start-date>
+        <select-end-date [control]="$any(reservationForm).get('endDate')"></select-end-date>
+    </main>
+</form>

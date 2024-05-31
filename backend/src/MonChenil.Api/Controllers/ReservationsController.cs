@@ -9,7 +9,6 @@ namespace MonChenil.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-[Authorize]
 public class ReservationsController : ControllerBase
 {
     private readonly IReservationsRepository reservationsRepository;
@@ -33,6 +32,7 @@ public class ReservationsController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     public IActionResult GetCurrentUserReservations()
     {
         string currentUserId = GetCurrentUserId();
@@ -40,6 +40,7 @@ public class ReservationsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public IActionResult CreateReservation(CreateReservationRequest request)
     {
         string currentUserId = GetCurrentUserId();
@@ -53,6 +54,7 @@ public class ReservationsController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize]
     public IActionResult DeleteReservation(Guid id)
     {
         string currentUserId = GetCurrentUserId();

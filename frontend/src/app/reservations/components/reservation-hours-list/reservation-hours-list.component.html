@@ -1,1 +1,5 @@
-<p>timeslots-list works!</p>
+<div class="grid grid-cols-1 gap-3 overflow-y-scroll sm:grid-cols-4 sm:w-96">
+    @for (arrivalTime of arrivalTimes; track arrivalTime) {
+    <reservation-hours-card [arrivalTime]="arrivalTime"></reservation-hours-card>
+    }
+</div>

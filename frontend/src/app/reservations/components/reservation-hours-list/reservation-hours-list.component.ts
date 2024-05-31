@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'reservation-hours-list',
   templateUrl: './reservation-hours-list.component.html',
-  styles: ``,
 })
-export class ReservationHoursListComponent {}
+export class ReservationHoursListComponent {
+  @Input() declare arrivalTimes: string[] | null;
+}

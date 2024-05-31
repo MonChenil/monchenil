@@ -5,4 +5,5 @@ export const environment = {
   backendRegister: '/api/register',
   backendIsAuthenticated: '/api/is-authenticated',
   backendPets: '/api/pets',
+  backendReservations: '/api/reservations',
 };

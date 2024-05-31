@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { PetsService } from '../../../pets/services/pets.service';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'select-pets',
@@ -7,6 +8,8 @@ import { PetsService } from '../../../pets/services/pets.service';
 })
 export class SelectPetsComponent {
   constructor(private petsService: PetsService) {}
+
+  @Input() declare control: FormControl;
 
   pets$ = this.petsService.getCurrentUserPets();
 }

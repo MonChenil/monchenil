@@ -1,5 +1,7 @@
-<div class="card bg-base-100 shadow-md">
-    <div class="card-body flex-row justify-between gap-4 p-6">
-       <div class="card-title"></div>
-    </div>
+<div class="card bg-base-100 shadow-md" [ngClass]="{'border-2 border-green-500': isSelected()}">
+    <button (click)="selectHour()">
+        <div class="flex justify-center flex-row gap-4 p-6">
+            <div class="card-title text-center">{{ getFormattedTime(arrivalTime) }}</div>
+        </div>
+    </button>
 </div>
