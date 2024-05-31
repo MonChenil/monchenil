@@ -15,6 +15,5 @@ import { PetsCardComponent } from './components/pets-card/pets-card.component';
   ],
   imports: [SharedModule],
   providers: [PetsService],
-  exports: [PetsListComponent, PetsCardComponent],
 })
 export class PetsModule {}
