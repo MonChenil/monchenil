@@ -1,6 +1,9 @@
-<div class="card bg-base-100 shadow-md" [ngClass]="{'border-2 border-green-500': selected}">
+<div
+    class="card border-2 border-transparent bg-base-100 shadow-md"
+    [ngClass]="{ '!border-primary': selected }"
+>
     <button (click)="toggleArrivalTime()">
-        <div class="flex justify-center flex-row gap-4 p-6">
+        <div class="flex flex-row justify-center gap-4 p-6">
             <div class="card-title text-center">{{ arrivalTime }}</div>
         </div>
     </button>
