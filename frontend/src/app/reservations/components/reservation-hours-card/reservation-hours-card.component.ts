@@ -1,22 +1,21 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'reservation-hours-card',
   templateUrl: './reservation-hours-card.component.html',
 })
 export class ReservationHoursCardComponent {
+  @Input() declare hourControl: FormControl;
   @Input() declare arrivalTime: string | null;
+  @Input() declare selected: boolean;
 
-  getFormattedTime(dateTimeString: string | null | undefined): string {
-    if (!dateTimeString) {
-      return '';
+  toggleArrivalTime() {
+    if (this.hourControl.value === this.arrivalTime) {
+      this.hourControl.setValue('');
+    } else {
+      this.hourControl.setValue(this.arrivalTime);
     }
-    const timePart = dateTimeString.split('T')[1];
-    return timePart ? timePart.substring(0, 5) : '';
-  }
-
-  selectHour() {
-    console.log('Hour selected')
   }
 
   isSelected(): boolean {

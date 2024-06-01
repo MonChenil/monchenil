@@ -9,7 +9,7 @@ import { FormControl } from '@angular/forms';
 export class SelectPetsComponent {
   constructor(private petsService: PetsService) {}
 
-  @Input() declare control: FormControl;
+  @Input() declare petsControl: FormControl;
 
   pets$ = this.petsService.getCurrentUserPets();
 }

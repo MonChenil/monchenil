@@ -9,12 +9,25 @@ export class ReservationsPageComponent {
   constructor(private formBuilder: FormBuilder) {}
 
   reservationForm = this.formBuilder.group({
-    pets: [['']],
-    startDate: [''],
-    endDate: [''],
+    pets: [[]],
+    startDay: [''],
+    startDayTime: [''],
+    endDay: [''],
+    endDayTime: [''],
   });
 
-  onSubmit() { 
+  ngOnInit(): void {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    this.reservationForm.patchValue({
+      startDay: new Date().toISOString().split('T')[0],
+    });
+    this.reservationForm.patchValue({
+      endDay: tomorrow.toISOString().split('T')[0],
+    });
+  }
+
+  onSubmit() {
     console.log(this.reservationForm.value);
   }
 }

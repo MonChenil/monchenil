@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { ReservationsService } from '../../services/reservations.service';
-import { BehaviorSubject, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable, startWith, switchMap } from 'rxjs';
 import { FormControl } from '@angular/forms';
 
 @Component({
@@ -8,18 +8,26 @@ import { FormControl } from '@angular/forms';
   templateUrl: './select-start-date.component.html',
 })
 export class SelectStartDateComponent {
-  constructor(private reservationsServices: ReservationsService) {}
+  constructor(private reservationsService: ReservationsService) {
+  }
 
-  @Input() declare control: FormControl;
+  @Input() startDayControl: FormControl = new FormControl();
+  @Input() startDayTimeControl: FormControl = new FormControl();
+  
+  // arrivalTimes$: Observable<string[]> = this.startDayControl.valueChanges.pipe(
+  //   switchMap(() => this.getArrivalTimes()),
+  // );
 
-  refresh$ = new BehaviorSubject(null);
-  arrivalTimes$ = this.refresh$.pipe(
-    switchMap(() =>
-      this.reservationsServices.getArrivalTimes(new Date().toISOString()),
-    ),
+  // pip it with startDayTimeControl.valueChanges
+  arrivalTimes$: Observable<string[]> = this.startDayControl.valueChanges.pipe(
+    startWith(this.startDayControl.value),
+    switchMap(() => this.getArrivalTimes()),
   );
 
-  refresh() {
-    this.refresh$.next(null);
+  getArrivalTimes() {
+    return this.reservationsService.getArrivalTimes(
+      new Date(this.startDayControl.value).toISOString(),
+      new Date(new Date(this.startDayControl.value).setHours(23, 59, 59)).toISOString(),
+    );
   }
 }

@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { PetsService } from '../../../pets/services/pets.service';
 import { Pet } from '../../../pets/models/pet';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'reservation-pets-item',
@@ -8,24 +8,21 @@ import { Pet } from '../../../pets/models/pet';
   styles: ``,
 })
 export class ReservationPetsItemComponent {
-  constructor(private petsService: PetsService) {}
-
   petTypes = ['Chien', 'Chat']; // Order is important. Must match backend/src/MonChenil.Domain/Pets/PetType.cs
   petIcons = ['🐶', '🐱'];
-  selectedPets: Pet[] = [];
 
+  @Input() declare petsControl: FormControl;
   @Input() declare pet: Pet;
+  @Input() declare selected: boolean;
 
-  addPet(pet: Pet) {
-    const index = this.selectedPets.indexOf(pet);
-    if (index === -1) {
-      this.selectedPets.push(pet);
+  togglePetSelection(petId: string) {
+    const currentSelection = this.petsControl.value as string[];
+    if (this.selected) {
+      // Remove pet from selection
+      this.petsControl.setValue(currentSelection.filter((id) => id !== petId));
     } else {
-      this.selectedPets.splice(index, 1);
+      // Add pet to selection
+      this.petsControl.setValue([...currentSelection, petId]);
     }
-  }
-
-  isSelected(pet: any): boolean {
-    return this.selectedPets.includes(pet);
   }
 }

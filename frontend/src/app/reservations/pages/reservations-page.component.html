@@ -1,7 +1,7 @@
 <form [formGroup]="reservationForm" (ngSubmit)="onSubmit()" class="flex">
     <main class="flex min-h-screen flex-row items-center justify-center gap-6 bg-base-200">
-        <select-pets [control]="$any(reservationForm).get('pets')"></select-pets>
-        <select-start-date [control]="$any(reservationForm).get('startDate')"></select-start-date>
-        <select-end-date [control]="$any(reservationForm).get('endDate')"></select-end-date>
+        <select-pets [petsControl]="$any(reservationForm).get('pets')"></select-pets>
+        <select-start-date [startDayControl]="$any(reservationForm).get('startDay')" [startDayTimeControl]="$any(reservationForm).get('startDayTime')"></select-start-date>
+        <select-end-date [endDayControl]="$any(reservationForm).get('endDay')" [endDayTimeControl]="$any(reservationForm).get('endDayTime')"></select-end-date>
     </main>
 </form>
