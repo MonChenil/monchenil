@@ -1,5 +1,9 @@
-<div class="grid h-96 gap-3 overflow-y-scroll pr-3 sm:grid-cols-4 sm:w-96">
+<div class="grid h-96 gap-3 overflow-y-scroll p-2 pr-3 sm:w-96 sm:grid-cols-4">
     @for (arrivalTime of arrivalTimes; track arrivalTime) {
-    <reservation-hours-card [arrivalTime]="getFormattedTime(arrivalTime)" [selected]="isSelected(arrivalTime)" [hourControl]="hourControl"></reservation-hours-card>
+        <reservation-hours-card
+            [arrivalTime]="getFormattedTime(arrivalTime)"
+            [selected]="isSelected(arrivalTime)"
+            [hourControl]="hourControl"
+        ></reservation-hours-card>
     }
 </div>

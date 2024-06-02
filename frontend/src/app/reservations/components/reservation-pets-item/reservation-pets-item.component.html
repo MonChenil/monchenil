@@ -1,5 +1,5 @@
 <div class="card-body flex-row justify-between gap-4 p-1">
-    <button class="btn btn-circle btn-lg text-3xl bg-base-100" [ngClass]="{'border-2 border-primary': selected}" (click)="togglePetSelection(pet.id.value)">
+    <button class="btn btn-circle btn-lg text-3xl bg-base-100" [ngClass]="{'outline outline-primary': selected}" (click)="togglePetSelection(pet.id.value)">
         {{ petIcons[pet.type] }}
     </button>
     <h2 class="card-title grow justify-items-start">
