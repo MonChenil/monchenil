@@ -14,11 +14,17 @@ public class ReservationsController : ControllerBase
 {
     private readonly IReservationsRepository reservationsRepository;
     private readonly IPetsRepository petsRepository;
+    private readonly IReservationTimes reservationTimes;
 
-    public ReservationsController(IReservationsRepository reservationsRepository, IPetsRepository petsRepository)
+    public ReservationsController(
+        IReservationsRepository reservationsRepository,
+        IPetsRepository petsRepository,
+        IReservationTimes reservationTimes
+    )
     {
         this.reservationsRepository = reservationsRepository;
         this.petsRepository = petsRepository;
+        this.reservationTimes = reservationTimes;
     }
 
     private string GetCurrentUserId()
@@ -73,5 +79,12 @@ public class ReservationsController : ControllerBase
 
         reservationsRepository.DeleteReservation(reservation);
         return Ok();
+    }
+
+    [HttpGet("arrival-times")]
+    public IActionResult GetArrivalTimes([FromQuery] GetArrivalTimesRequest request)
+    {
+        List<DateTime> arrivalTimes = reservationTimes.GetArrivalTimes(request.StartDate, request.EndDate);
+        return Ok(arrivalTimes);
     }
 }
