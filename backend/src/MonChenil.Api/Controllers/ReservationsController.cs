@@ -42,13 +42,12 @@ public class ReservationsController : ControllerBase
         try
         {
             reservation = new Reservation(reservationId, currentUserId, request.StartDate, request.EndDate);
-
         }
-        catch (ArgumentException ex)
+        catch (ReservationEndDateException ex)
         {
-            return new BadRequestObjectResult(ex);
+            return new BadRequestObjectResult(ex.Message);
         }
-        
+
         var pets = petsRepository.GetPetsByIds(request.PetIds);
         reservation.AddPets(pets);
 
