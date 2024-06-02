@@ -12,6 +12,11 @@ public class Reservation
 
     public Reservation(ReservationId id, string ownerId, DateTime startDate, DateTime endDate)
     {
+        if (endDate.Date <= startDate.Date)
+        {
+            throw new ReservationEndDateException();
+        }
+
         Id = id;
         OwnerId = ownerId;
         StartDate = startDate;
