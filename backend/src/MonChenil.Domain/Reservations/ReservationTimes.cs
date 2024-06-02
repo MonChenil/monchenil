@@ -5,6 +5,7 @@ namespace MonChenil.Domain.Reservations;
 public class ReservationTimes : IReservationTimes
 {
     private readonly IReservationsRepository reservationsRepository;
+    private const int MAX_CAPACITY = 3;
     private const int INTERVAL_MINUTES = 30;
     private static readonly TimeSpan OPENING_HOUR = new(9, 0, 0);
     private static readonly TimeSpan CLOSING_HOUR = new(18, 0, 0);
@@ -72,9 +73,40 @@ public class ReservationTimes : IReservationTimes
         return times;
     }
 
-    public List<DateTime> GetDepartureTimes(DateTime startDate, DateTime endDate, DateTime arrivalTime, List<Pet> pets)
+    public List<DateTime> GetDepartureTimes(DateTime startDate, DateTime endDate, List<Pet> pets)
     {
-        List<DateTime> times = GetArrivalTimes(startDate, endDate);
+        List<DateTime> times = [];
+        var reservations = reservationsRepository.GetOverlappingReservations(startDate, endDate);
+        var currentTime = GetFirstTime(startDate);
+
+        while (currentTime < endDate)
+        {
+            if (MaxCapacityReached(currentTime, pets))
+            {
+                // Cannot end a reservation after the max capacity is reached
+                break;
+            }
+
+            if (!IsOpenAt(currentTime) || AnyReservationAtTime(currentTime, reservations))
+            {
+                currentTime = GetNextTime(currentTime);
+                continue;
+            }
+
+            times.Add(currentTime);
+            currentTime = GetNextTime(currentTime);
+        }
+
         return times;
+    }
+
+    private bool MaxCapacityReached(DateTime currentTime, List<Pet> pets)
+    {
+        var overlappingReservations = reservationsRepository.GetOverlappingReservations(currentTime, currentTime.AddMinutes(INTERVAL_MINUTES));
+        int petCount = overlappingReservations.SelectMany(reservation => reservation.Pets).Count();
+        petCount += pets.Count;
+
+
+        return petCount > MAX_CAPACITY;
     }
 }

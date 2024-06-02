@@ -19,7 +19,6 @@ public class GetDepartureTimesTests
             [
                 new DateTime(2024, 1, 3, 9, 0, 0),
                 new DateTime(2024, 1, 3, 10, 0, 0),
-                new DateTime(2024, 1, 1, 8, 0, 0),
                 new List<Pet> { new Dog(new("287383724237054"), "name", "ownerId") },
                 new List<DateTime>
                 {
@@ -30,7 +29,6 @@ public class GetDepartureTimesTests
             [
                 new DateTime(2024, 1, 3, 8, 0, 0),
                 new DateTime(2024, 1, 3, 11, 0, 0),
-                new DateTime(2024, 1, 1, 8, 0, 0),
                 new List<Pet> { new Dog(new("287383724237054"), "name", "ownerId") },
                 new List<DateTime>
                 {
@@ -47,7 +45,6 @@ public class GetDepartureTimesTests
             [
                 new DateTime(2024, 1, 3, 9, 0, 0),
                 new DateTime(2024, 1, 3, 10, 0, 0),
-                new DateTime(2024, 1, 1, 8, 0, 0),
                 new List<Pet> { new Dog(new("287383724237054"), "name", "ownerId") },
                 new List<Reservation>
                 {
@@ -65,11 +62,10 @@ public class GetDepartureTimesTests
     public void GetDepartureTimes_ShouldReturnExpectedTimes(
         DateTime startDate,
         DateTime endDate,
-        DateTime arrivalTime,
         List<Pet> pets,
         List<DateTime> expectedTimes)
     {
-        var departureTimes = _reservationTimes.GetDepartureTimes(startDate, endDate, arrivalTime, pets);
+        var departureTimes = _reservationTimes.GetDepartureTimes(startDate, endDate, pets);
         Assert.Equal(expectedTimes, departureTimes);
     }
 
@@ -78,7 +74,6 @@ public class GetDepartureTimesTests
     public void GetDepartureTimes_WithConflictingReservations_ShouldReturnExpectedTimes(
         DateTime startDate,
         DateTime endDate,
-        DateTime arrivalTime,
         List<Pet> pets,
         List<Reservation> reservations,
         List<DateTime> expectedTimes)
@@ -88,12 +83,12 @@ public class GetDepartureTimesTests
             _reservationsRepository.AddReservation(reservation);
         }
 
-        var departureTimes = _reservationTimes.GetDepartureTimes(startDate, endDate, arrivalTime, pets);
+        var departureTimes = _reservationTimes.GetDepartureTimes(startDate, endDate, pets);
         Assert.Equal(expectedTimes, departureTimes);
     }
 
     [Fact]
-    public void GetDepartureTimes_ShouldNotReturnTimesIfMaxCapacityReachedDuringReservation()
+    public void GetDepartureTimes_MaxCapacityReachedByOneReservation_ShouldNotReturnTimesAfterThatReservationStart()
     {
         // MAX_CAPACITY = 3;
 
@@ -109,7 +104,6 @@ public class GetDepartureTimesTests
 
         DateTime startDate = new(2024, 1, 3, 9, 0, 0);
         DateTime endDate = new(2024, 1, 3, 23, 0, 0);
-        DateTime arrivalTime = new(2024, 1, 1, 9, 0, 0);
         List<DateTime> expectedTimes = [
             new(2024, 1, 3, 9, 0, 0),
             new(2024, 1, 3, 9, 30, 0),
@@ -117,7 +111,42 @@ public class GetDepartureTimesTests
             new(2024, 1, 3, 10, 30, 0),
         ];
 
-        List<DateTime> departureTimes = _reservationTimes.GetDepartureTimes(startDate, endDate, arrivalTime, pets);
+        List<DateTime> departureTimes = _reservationTimes.GetDepartureTimes(startDate, endDate, pets);
+
+        Assert.Equal(expectedTimes, departureTimes);
+    }
+
+    [Fact]
+    public void GetDepartureTimes_MaxCapacityReachedByStackedReservations_ShouldNotReturnTimesAfterMaxCapacityReached()
+    {
+        // MAX_CAPACITY = 3;
+
+        List<Pet> pets = [
+            new Dog(new("287383724237054"), "name", "ownerId"),
+            new Dog(new("480531850353143"), "name", "ownerId"),
+            new Dog(new("358488615963723"), "name", "ownerId"),
+            new Dog(new("358488615963723"), "name", "ownerId"),
+        ];
+
+        Reservation r1 = new(new(Guid.NewGuid()), "", new(2024, 1, 3, 10, 0, 0), new(2024, 1, 4, 10, 0, 0));
+        r1.AddPets([pets[0]]);
+
+        Reservation r2 = new(new(Guid.NewGuid()), "", new(2024, 1, 3, 11, 30, 0), new(2024, 1, 4, 11, 30, 0));
+        r2.AddPets([pets[1], pets[2]]);
+
+        _reservationsRepository.AddReservation(r1);
+        _reservationsRepository.AddReservation(r2);
+
+        DateTime startDate = new(2024, 1, 3, 9, 0, 0);
+        DateTime endDate = new(2024, 1, 3, 23, 0, 0);
+        List<DateTime> expectedTimes = [
+            new(2024, 1, 3, 9, 0, 0),
+            new(2024, 1, 3, 9, 30, 0),
+            new(2024, 1, 3, 10, 30, 0),
+            new(2024, 1, 3, 11, 0, 0),
+        ];
+
+        List<DateTime> departureTimes = _reservationTimes.GetDepartureTimes(startDate, endDate, [pets[2]]);
 
         Assert.Equal(expectedTimes, departureTimes);
     }
