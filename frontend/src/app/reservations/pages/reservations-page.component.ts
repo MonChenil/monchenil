@@ -1,3 +1,4 @@
+import { formatDate } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 
@@ -10,22 +11,17 @@ export class ReservationsPageComponent {
 
   reservationForm = this.formBuilder.group({
     pets: [[]],
-    startDay: [''],
+    startDay: [formatDate(new Date(), 'yyyy-MM-dd', 'en')],
     startDayTime: [''],
-    endDay: [''],
+    endDay: [
+      formatDate(
+        new Date().setDate(new Date().getDate() + 1),
+        'yyyy-MM-dd',
+        'en',
+      ),
+    ],
     endDayTime: [''],
   });
-
-  ngOnInit(): void {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    this.reservationForm.patchValue({
-      startDay: new Date().toISOString().split('T')[0],
-    });
-    this.reservationForm.patchValue({
-      endDay: tomorrow.toISOString().split('T')[0],
-    });
-  }
 
   onSubmit() {
     console.log(this.reservationForm.value);
