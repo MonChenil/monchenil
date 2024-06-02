@@ -7,38 +7,46 @@ public class ReservationTimesTests
     public static IEnumerable<object[]> GetArrivalTimesSimpleData =>
         [
             [
-                new DateTime(2021, 1, 1, 0, 0, 0),
-                new DateTime(2021, 1, 1, 0, 0, 0),
+                new DateTime(2024, 1, 1, 8, 0, 0),
+                new DateTime(2024, 1, 1, 9, 0, 0),
                 new List<DateTime>()
             ],
             [
-                new DateTime(2021, 1, 1, 0, 0, 0),
-                new DateTime(2021, 1, 1, 1, 0, 0),
+                new DateTime(2024, 1, 1, 8, 0, 0),
+                new DateTime(2024, 1, 1, 10, 0, 0),
                 new List<DateTime>
                 {
-                    new(2021, 1, 1, 0, 0, 0),
-                    new(2021, 1, 1, 0, 30, 0),
+                    new(2024, 1, 1, 9, 0, 0),
+                    new(2024, 1, 1, 9, 30, 0),
                 }
             ],
             [
-                new DateTime(2021, 1, 1, 0, 0, 0),
-                new DateTime(2021, 1, 1, 2, 0, 0),
+                new DateTime(2024, 1, 1, 9, 0, 0),
+                new DateTime(2024, 1, 1, 11, 0, 0),
                 new List<DateTime>
                 {
-                    new(2021, 1, 1, 0, 0, 0),
-                    new(2021, 1, 1, 0, 30, 0),
-                    new(2021, 1, 1, 1, 0, 0),
-                    new(2021, 1, 1, 1, 30, 0),
+                    new(2024, 1, 1, 9, 0, 0),
+                    new(2024, 1, 1, 9, 30, 0),
+                    new(2024, 1, 1, 10, 0, 0),
+                    new(2024, 1, 1, 10, 30, 0),
                 }
             ],
             [
-                new DateTime(2021, 1, 1, 0, 1, 1),
-                new DateTime(2021, 1, 1, 2, 0, 0),
+                new DateTime(2024, 1, 1, 9, 1, 1),
+                new DateTime(2024, 1, 1, 11, 0, 0),
                 new List<DateTime>
                 {
-                    new(2021, 1, 1, 0, 30, 0),
-                    new(2021, 1, 1, 1, 0, 0),
-                    new(2021, 1, 1, 1, 30, 0),
+                    new(2024, 1, 1, 9, 30, 0),
+                    new(2024, 1, 1, 10, 0, 0),
+                    new(2024, 1, 1, 10, 30, 0),
+                }
+            ],
+            [
+                new DateTime(2024, 1, 1, 17, 1, 1),
+                new DateTime(2024, 1, 1, 19, 0, 0),
+                new List<DateTime>
+                {
+                    new(2024, 1, 1, 17, 30, 0),
                 }
             ],
         ];
@@ -46,43 +54,43 @@ public class ReservationTimesTests
     public static IEnumerable<object[]> GetArrivalTimesConflictingReservationsData =>
         [
             [
-                new DateTime(2021, 1, 1, 0, 0, 0),
-                new DateTime(2021, 1, 1, 1, 0, 0),
+                new DateTime(2024, 1, 1, 9, 0, 0),
+                new DateTime(2024, 1, 1, 10, 0, 0),
                 new List<Reservation>
                 {
-                    new(new(Guid.NewGuid()), "", new(2021, 1, 1, 0, 30, 0), new(2021, 1, 2, 0, 30, 0)),
+                    new(new(Guid.NewGuid()), "", new(2024, 1, 1, 9, 30, 0), new(2024, 1, 2, 0, 30, 0)),
                 },
                 new List<DateTime>
                 {
-                    new(2021, 1, 1, 0, 0, 0),
+                    new(2024, 1, 1, 9, 0, 0),
                 }
             ],
             [
-                new DateTime(2021, 1, 1, 0, 0, 0),
-                new DateTime(2021, 1, 1, 2, 0, 0),
+                new DateTime(2024, 1, 1, 9, 0, 0),
+                new DateTime(2024, 1, 1, 11, 0, 0),
                 new List<Reservation>
                 {
-                    new(new(Guid.NewGuid()), "", new(2021, 1, 1, 0, 30, 0), new(2021, 1, 2, 0, 30, 0)),
+                    new(new(Guid.NewGuid()), "", new(2024, 1, 1, 9, 30, 0), new(2024, 1, 2, 0, 30, 0)),
                 },
                 new List<DateTime>
                 {
-                    new(2021, 1, 1, 0, 0, 0),
-                    new(2021, 1, 1, 1, 0, 0),
-                    new(2021, 1, 1, 1, 30, 0),
+                    new(2024, 1, 1, 9, 0, 0),
+                    new(2024, 1, 1, 10, 0, 0),
+                    new(2024, 1, 1, 10, 30, 0),
                 }
             ],
             [
-                new DateTime(2021, 1, 1, 0, 0, 0),
-                new DateTime(2021, 1, 1, 2, 0, 0),
+                new DateTime(2024, 1, 1, 9, 0, 0),
+                new DateTime(2024, 1, 1, 11, 0, 0),
                 new List<Reservation>
                 {
-                    new(new(Guid.NewGuid()), "", new(2020, 12, 31, 0, 30, 0), new(2021, 1, 1, 0, 30, 0)),
-                    new(new(Guid.NewGuid()), "", new(2021, 1, 1, 1, 0, 0), new(2021, 1, 2, 1, 0, 0)),
+                    new(new(Guid.NewGuid()), "", new(2020, 12, 31, 0, 30, 0), new(2024, 1, 1, 9, 30, 0)),
+                    new(new(Guid.NewGuid()), "", new(2024, 1, 1, 10, 0, 0), new(2024, 1, 2, 1, 0, 0)),
                 },
                 new List<DateTime>
                 {
-                    new(2021, 1, 1, 0, 0, 0),
-                    new(2021, 1, 1, 1, 30, 0),
+                    new(2024, 1, 1, 9, 0, 0),
+                    new(2024, 1, 1, 10, 30, 0),
                 }
             ],
         ];
