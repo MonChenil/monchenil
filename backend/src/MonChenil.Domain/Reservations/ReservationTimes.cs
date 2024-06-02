@@ -52,7 +52,7 @@ public class ReservationTimes : IReservationTimes
         return reservations.Any(reservation => reservation.StartDate == time || reservation.EndDate == time);
     }
 
-    public List<DateTime> GetArrivalTimes(DateTime startDate, DateTime endDate)
+    public List<DateTime> GetArrivalTimes(DateTime startDate, DateTime endDate, List<Pet> pets)
     {
         List<DateTime> times = [];
         var reservations = reservationsRepository.GetOverlappingReservations(startDate, endDate);
@@ -60,6 +60,12 @@ public class ReservationTimes : IReservationTimes
 
         while (currentTime < endDate)
         {
+            if (MaxCapacityReached(currentTime, pets))
+            {
+                currentTime = GetNextTime(currentTime);
+                continue;
+            }
+
             if (!IsOpenAt(currentTime) || AnyReservationAtTime(currentTime, reservations))
             {
                 currentTime = GetNextTime(currentTime);

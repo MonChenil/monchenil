@@ -38,6 +38,17 @@ public class GetDepartureTimesTests
                     new(2024, 1, 3, 10, 30, 0),
                 }
             ],
+            [
+                new DateTime(2024, 1, 3, 8, 0, 0),
+                new DateTime(2024, 1, 3, 11, 0, 0),
+                new List<Pet> {
+                    new Dog(new("287383724237054"), "name", "ownerId"),
+                    new Dog(new("480531850353143"), "name", "ownerId"),
+                    new Dog(new("358488615963723"), "name", "ownerId"),
+                    new Dog(new("983987398738490"), "name", "ownerId"),
+                },
+                new List<DateTime> { }
+            ],
         ];
 
     public static IEnumerable<object[]> GetDepartureTimesConflictingReservationsData =>
