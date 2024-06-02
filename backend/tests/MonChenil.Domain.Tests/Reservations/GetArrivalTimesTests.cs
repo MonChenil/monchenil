@@ -2,7 +2,7 @@ using MonChenil.Domain.Reservations;
 
 namespace MonChenil.Domain.Tests.Reservations;
 
-public class ReservationTimesTests
+public class GetArrivalTimesTests
 {
     public static IEnumerable<object[]> GetArrivalTimesSimpleData =>
         [
@@ -98,7 +98,7 @@ public class ReservationTimesTests
     private readonly IReservationsRepository _reservationsRepository;
     private readonly IReservationTimes _reservationTimes;
 
-    public ReservationTimesTests()
+    public GetArrivalTimesTests()
     {
         _reservationsRepository = new FakeReservationsRepository();
         _reservationTimes = new ReservationTimes(_reservationsRepository);
