@@ -4,6 +4,15 @@ namespace MonChenil.Domain.Tests.Reservations;
 
 public class GetArrivalTimesTests
 {
+    private readonly IReservationsRepository _reservationsRepository;
+    private readonly IReservationTimes _reservationTimes;
+
+    public GetArrivalTimesTests()
+    {
+        _reservationsRepository = new FakeReservationsRepository();
+        _reservationTimes = new ReservationTimes(_reservationsRepository);
+    }
+    
     public static IEnumerable<object[]> GetArrivalTimesSimpleData =>
         [
             [
@@ -94,15 +103,6 @@ public class GetArrivalTimesTests
                 }
             ],
         ];
-
-    private readonly IReservationsRepository _reservationsRepository;
-    private readonly IReservationTimes _reservationTimes;
-
-    public GetArrivalTimesTests()
-    {
-        _reservationsRepository = new FakeReservationsRepository();
-        _reservationTimes = new ReservationTimes(_reservationsRepository);
-    }
 
     [Theory]
     [MemberData(nameof(GetArrivalTimesSimpleData))]

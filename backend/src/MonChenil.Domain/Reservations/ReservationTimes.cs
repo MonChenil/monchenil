@@ -71,4 +71,10 @@ public class ReservationTimes : IReservationTimes
 
         return times;
     }
+
+    public List<DateTime> GetDepartureTimes(DateTime startDate, DateTime endDate, DateTime arrivalTime, List<Pet> pets)
+    {
+        List<DateTime> times = GetArrivalTimes(startDate, endDate);
+        return times;
+    }
 }
