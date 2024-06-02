@@ -1,20 +1,38 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { formatDate } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 @Injectable()
 export class ReservationsService {
-  constructor(private http: HttpClient) { }
-  
-  getArrivalTimes(startDate: string, endDate?: string) {
-    let params = new HttpParams().set('StartDate', startDate);
+  constructor(private http: HttpClient) {}
 
-    if (endDate) {
-      params = params.set('EndDate', endDate);
+  getArrivalTimes(startDate: Date, endDate: Date) {
+    const now = new Date();
+    if (startDate < now) {
+      startDate = now;
     }
-    
-    return this.http.get<string[]>(`${environment.backendReservations}/arrival-times`, {
-      params,
-    });
+
+    let formattedStartDate;
+    let formattedEndDate;
+
+    try {
+      formattedStartDate = formatDate(startDate, 'yyyy-MM-ddTHH:mm:ss', 'en');
+      formattedEndDate = formatDate(endDate, 'yyyy-MM-ddTHH:mm:ss', 'en');
+    } catch (error) {
+      console.error(error);
+      return of([]);
+    }
+
+    return this.http.get<string[]>(
+      `${environment.backendReservations}/arrival-times`,
+      {
+        params: {
+          StartDate: formattedStartDate,
+          ...(endDate && { EndDate: formattedEndDate }),
+        },
+      },
+    );
   }
 }

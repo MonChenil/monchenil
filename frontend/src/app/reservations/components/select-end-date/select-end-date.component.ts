@@ -1,4 +1,3 @@
-import { formatDate } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import {
@@ -8,7 +7,6 @@ import {
   of,
   startWith,
   switchMap,
-  tap,
 } from 'rxjs';
 import { ReservationsService } from '../../services/reservations.service';
 
@@ -34,7 +32,6 @@ export class SelectEndDateComponent implements OnInit {
         console.error(error);
         return of([]);
       }),
-      tap((arrivalTimes) => console.log(arrivalTimes)),
     );
   }
 
@@ -46,20 +43,6 @@ export class SelectEndDateComponent implements OnInit {
     endDate.setDate(endDate.getDate() + 1);
     endDate.setHours(0, 0, 0, 0);
 
-    let formattedStartDate;
-    let formattedEndDate;
-
-    try {
-      formattedStartDate = formatDate(startDate, 'yyyy-MM-dd', 'en');
-      formattedEndDate = formatDate(endDate, 'yyyy-MM-dd', 'en');
-    } catch (error) {
-      console.error(error);
-      return of([]);
-    }
-
-    return this.reservationsService.getArrivalTimes(
-      formattedStartDate,
-      formattedEndDate,
-    );
+    return this.reservationsService.getArrivalTimes(startDate, endDate);
   }
 }
