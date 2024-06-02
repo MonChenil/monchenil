@@ -16,6 +16,7 @@ export class ReservationsPageComponent {
     this.minStartDate = new Date();
     this.minEndDate = new Date();
     this.minEndDate.setDate(this.minStartDate.getDate() + 1);
+    this.minEndDate.setHours(0, 0, 0, 0);
 
     this.reservationForm = this.formBuilder.group({
       pets: [[]],
