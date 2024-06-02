@@ -27,6 +27,7 @@ builder.Services.AddScoped<IReservationsRepository, ReservationsRepository>();
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add(new PetIdExceptionFilter());
+    options.Filters.Add(new ReservationStartDateExceptionFilter());
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
