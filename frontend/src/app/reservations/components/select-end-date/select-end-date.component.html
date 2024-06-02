@@ -1,7 +1,22 @@
 <div class="flex flex-col items-center">
     <h2 class="mb-4 text-xl font-bold">Sélectionnez une date de départ</h2>
     <div class="flex flex-col space-y-2">
-        <app-input label="Date de départ" type="date" [control]="endDayControl"></app-input>
-        <reservation-hours-list [arrivalTimes]="arrivalTimes$ | async" [hourControl]="endDayTimeControl"></reservation-hours-list>
+        <label class="form-control">
+            <div class="label">
+                <span class="label-text text-sm font-medium">
+                    Date de départ
+                </span>
+            </div>
+            <input
+                type="date"
+                class="input input-bordered"
+                [formControl]="endDayControl"
+                [min]="minDate | date: 'yyyy-MM-dd'"
+            />
+        </label>
+        <reservation-hours-list
+            [arrivalTimes]="arrivalTimes$ | async"
+            [hourControl]="endDayTimeControl"
+        ></reservation-hours-list>
     </div>
 </div>

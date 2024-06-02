@@ -1,28 +1,65 @@
-import { Component, Input } from '@angular/core';
+import { formatDate } from '@angular/common';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { BehaviorSubject, Observable, of, switchMap } from 'rxjs';
+import {
+  Observable,
+  catchError,
+  debounceTime,
+  of,
+  startWith,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { ReservationsService } from '../../services/reservations.service';
 
 @Component({
   selector: 'select-end-date',
   templateUrl: './select-end-date.component.html',
 })
-export class SelectEndDateComponent {
-  constructor(private reservationsServices: ReservationsService) {}
+export class SelectEndDateComponent implements OnInit {
+  constructor(private reservationsService: ReservationsService) {}
 
   @Input() declare endDayControl: FormControl;
   @Input() declare endDayTimeControl: FormControl;
 
-  refresh$ = new BehaviorSubject(null);
-  arrivalTimes$ = this.refresh$.pipe(
-    switchMap(() =>
-      this.reservationsServices.getArrivalTimes(
-        new Date(new Date().getTime() + 2 * 60 * 60 * 1000).toISOString(),
-      ),
-    ),
-  );
+  minDate = new Date();
+  arrivalTimes$: Observable<string[]> = new Observable();
 
-  refresh() {
-    this.refresh$.next(null);
+  ngOnInit() {
+    this.arrivalTimes$ = this.endDayControl.valueChanges.pipe(
+      startWith(this.endDayControl.value),
+      debounceTime(200),
+      switchMap(() => this.getArrivalTimes()),
+      catchError((error) => {
+        console.error(error);
+        return of([]);
+      }),
+      tap((arrivalTimes) => console.log(arrivalTimes)),
+    );
+  }
+
+  getArrivalTimes() {
+    const startDate = new Date(this.endDayControl.value);
+    startDate.setHours(0, 0, 0, 0);
+
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + 1);
+    endDate.setHours(0, 0, 0, 0);
+
+    let formattedStartDate;
+    let formattedEndDate;
+
+    try {
+      formattedStartDate = formatDate(startDate, 'yyyy-MM-dd', 'en');
+      formattedEndDate = formatDate(endDate, 'yyyy-MM-dd', 'en');
+    } catch (error) {
+      console.error(error);
+      return of([]);
+    }
+
+    return this.reservationsService.getArrivalTimes(
+      formattedStartDate,
+      formattedEndDate,
+    );
   }
 }

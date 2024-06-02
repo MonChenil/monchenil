@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import {
   Observable,
@@ -16,7 +16,7 @@ import { ReservationsService } from '../../services/reservations.service';
   selector: 'select-start-date',
   templateUrl: './select-start-date.component.html',
 })
-export class SelectStartDateComponent {
+export class SelectStartDateComponent implements OnInit {
   constructor(private reservationsService: ReservationsService) {}
 
   @Input() declare startDayControl: FormControl<string>;
