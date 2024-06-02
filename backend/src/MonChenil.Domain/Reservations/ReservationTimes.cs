@@ -3,7 +3,9 @@ namespace MonChenil.Domain.Reservations;
 public class ReservationTimes : IReservationTimes
 {
     private readonly IReservationsRepository reservationsRepository;
-    private const int INTERVAL = 30;
+    private const int INTERVAL_MINUTES = 30;
+    private readonly TimeSpan OPENING_HOUR = new(9, 0, 0);
+    private readonly TimeSpan CLOSING_HOUR = new(18, 0, 0);
 
     public ReservationTimes(IReservationsRepository reservationsRepository)
     {
@@ -17,19 +19,27 @@ public class ReservationTimes : IReservationTimes
         var times = new List<DateTime>();
 
         var currentTime = new DateTime(startDate.Year, startDate.Month, startDate.Day, startDate.Hour, startDate.Minute, 0);
-        if (currentTime.Minute % INTERVAL != 0)
+        if (currentTime.Minute % INTERVAL_MINUTES != 0)
         {
-            currentTime = currentTime.AddMinutes(INTERVAL - (currentTime.Minute % INTERVAL));
+            currentTime = currentTime.AddMinutes(INTERVAL_MINUTES - (currentTime.Minute % INTERVAL_MINUTES));
         }
 
         while (currentTime < endDate)
         {
-            if (reservations.All(reservation => reservation.StartDate != currentTime && reservation.EndDate != currentTime))
+            if (reservations.Any(reservation => reservation.StartDate == currentTime || reservation.EndDate == currentTime))
             {
-                times.Add(currentTime);
+                currentTime = currentTime.AddMinutes(INTERVAL_MINUTES);
+                continue;
             }
 
-            currentTime = currentTime.AddMinutes(INTERVAL);
+            if (currentTime.TimeOfDay < OPENING_HOUR || currentTime.TimeOfDay > CLOSING_HOUR.Subtract(new(0, INTERVAL_MINUTES, 0)))
+            {
+                currentTime = currentTime.AddMinutes(INTERVAL_MINUTES);
+                continue;
+            }
+
+            times.Add(currentTime);
+            currentTime = currentTime.AddMinutes(INTERVAL_MINUTES);
         }
 
         return times;
