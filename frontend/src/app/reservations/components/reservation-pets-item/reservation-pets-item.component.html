@@ -1,0 +1,12 @@
+<div class="card-body flex-row justify-between gap-4 p-1">
+    <button
+        class="btn btn-circle btn-lg bg-base-100 text-3xl"
+        [ngClass]="{ 'outline outline-primary': selected }"
+        (click)="togglePetSelection(pet.id.value)"
+    >
+        {{ petIcons[pet.type] }}
+    </button>
+    <h2 class="card-title grow justify-items-start">
+        {{ pet.name }}
+    </h2>
+</div>

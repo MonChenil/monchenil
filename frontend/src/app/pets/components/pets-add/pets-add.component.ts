@@ -69,7 +69,7 @@ export class PetsAddComponent {
     }
 
     if (field.errors['httpError']) {
-      return field.errors['httpError'];
+      return 'Une erreur s\'est produite';
     }
 
     return null;

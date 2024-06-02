@@ -1,0 +1,29 @@
+<div class="flex flex-col items-center">
+    <h2 class="mb-4 text-xl font-bold">Sélectionnez une date d'arrivée</h2>
+    <div class="flex flex-col space-y-2">
+        <label class="form-control pl-2">
+            <div class="label">
+                <span class="label-text text-sm font-medium">
+                    Date d'arrivée
+                </span>
+            </div>
+            <input
+                type="date"
+                class="input input-bordered"
+                [formControl]="startDayControl"
+                [min]="minDate | date: 'yyyy-MM-dd'"
+            />
+            @if (getErrorMessage()) {
+                <div class="label">
+                    <span class="label-text-alt text-error">
+                        {{ getErrorMessage() }}
+                    </span>
+                </div>
+            }
+        </label>
+        <reservation-hours-list
+            [arrivalTimes]="arrivalTimes$ | async"
+            [hourControl]="startDayTimeControl"
+        ></reservation-hours-list>
+    </div>
+</div>
