@@ -62,3 +62,5 @@ app.MapControllers();
 app.UseAuthorization();
 
 app.Run();
+
+public partial class Program { }
