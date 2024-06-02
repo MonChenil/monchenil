@@ -21,8 +21,8 @@ export class SelectEndDateComponent implements OnInit {
 
   @Input() declare endDayControl: FormControl;
   @Input() declare endDayTimeControl: FormControl;
+  @Input() declare minDate: Date;
 
-  minDate = new Date();
   arrivalTimes$: Observable<string[]> = new Observable();
 
   ngOnInit() {
