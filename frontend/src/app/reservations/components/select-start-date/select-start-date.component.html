@@ -13,6 +13,13 @@
                 [formControl]="startDayControl"
                 [min]="minDate | date: 'yyyy-MM-dd'"
             />
+            @if (getErrorMessage()) {
+                <div class="label">
+                    <span class="label-text-alt text-error">
+                        {{ getErrorMessage() }}
+                    </span>
+                </div>
+            }
         </label>
         <reservation-hours-list
             [arrivalTimes]="arrivalTimes$ | async"

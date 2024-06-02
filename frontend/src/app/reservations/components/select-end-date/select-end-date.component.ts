@@ -36,13 +36,34 @@ export class SelectEndDateComponent implements OnInit {
   }
 
   getArrivalTimes() {
-    const startDate = new Date(this.endDayControl.value);
+    let startDate = new Date(this.endDayControl.value);
     startDate.setHours(0, 0, 0, 0);
 
-    const endDate = new Date(startDate);
+    let dayOfMinDate = new Date(this.minDate);
+    dayOfMinDate.setHours(0, 0, 0, 0);
+
+    if (startDate < dayOfMinDate) {
+      this.endDayControl.setErrors({ invalidDate: true });
+      return of([]);
+    }
+
+    if (startDate.getTime() == dayOfMinDate.getTime()) {
+      startDate = new Date(this.minDate);
+    }
+
+    let endDate = new Date(startDate);
     endDate.setDate(endDate.getDate() + 1);
     endDate.setHours(0, 0, 0, 0);
 
     return this.reservationsService.getArrivalTimes(startDate, endDate);
+  }
+
+  getErrorMessage(): string | null {
+    const field = this.endDayControl;
+    return (field.touched || field.dirty) &&
+      field.errors &&
+      field.errors['invalidDate']
+      ? `Cette date doit être postérieure ou égale au ${this.minDate.toLocaleDateString()}`
+      : null;
   }
 }

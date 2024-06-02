@@ -9,11 +9,6 @@ export class ReservationsService {
   constructor(private http: HttpClient) {}
 
   getArrivalTimes(startDate: Date, endDate: Date) {
-    const now = new Date();
-    if (startDate < now) {
-      startDate = now;
-    }
-
     let formattedStartDate;
     let formattedEndDate;
 
