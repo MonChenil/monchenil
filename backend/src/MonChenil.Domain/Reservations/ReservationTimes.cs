@@ -15,6 +15,40 @@ public class ReservationTimes : IReservationTimes
         this.reservationsRepository = reservationsRepository;
     }
 
+    public List<DateTime> GetArrivalTimes(DateTime startDate, DateTime endDate, List<Pet> pets)
+    {
+        return GetTimes(startDate, endDate, pets, true);
+    }
+
+    public List<DateTime> GetDepartureTimes(DateTime startDate, DateTime endDate, List<Pet> pets)
+    {
+        return GetTimes(startDate, endDate, pets, false);
+    }
+
+    private List<DateTime> GetTimes(DateTime startDate, DateTime endDate, List<Pet> pets, bool breakOnMaxCapacity)
+    {
+        List<DateTime> times = [];
+        var reservations = reservationsRepository.GetOverlappingReservations(startDate, endDate);
+
+        for (var currentTime = GetFirstTime(startDate); currentTime < endDate; currentTime = GetNextTime(currentTime))
+        {
+            bool maxCapacityReached = MaxCapacityReached(currentTime, pets);
+            if (maxCapacityReached && breakOnMaxCapacity)
+            {
+                break;
+            }
+
+            if (maxCapacityReached || !IsOpenAt(currentTime) || AnyReservationAtTime(currentTime, reservations))
+            {
+                continue;
+            }
+
+            times.Add(currentTime);
+        }
+
+        return times;
+    }
+
     private static DateTime GetTimeWithoutSeconds(DateTime time)
     {
         return new DateTime(time.Year, time.Month, time.Day, time.Hour, time.Minute, 0);
@@ -50,60 +84,6 @@ public class ReservationTimes : IReservationTimes
     private static bool AnyReservationAtTime(DateTime time, IEnumerable<Reservation> reservations)
     {
         return reservations.Any(reservation => reservation.StartDate == time || reservation.EndDate == time);
-    }
-
-    public List<DateTime> GetArrivalTimes(DateTime startDate, DateTime endDate, List<Pet> pets)
-    {
-        List<DateTime> times = [];
-        var reservations = reservationsRepository.GetOverlappingReservations(startDate, endDate);
-        var currentTime = GetFirstTime(startDate);
-
-        while (currentTime < endDate)
-        {
-            if (MaxCapacityReached(currentTime, pets))
-            {
-                currentTime = GetNextTime(currentTime);
-                continue;
-            }
-
-            if (!IsOpenAt(currentTime) || AnyReservationAtTime(currentTime, reservations))
-            {
-                currentTime = GetNextTime(currentTime);
-                continue;
-            }
-
-            times.Add(currentTime);
-            currentTime = GetNextTime(currentTime);
-        }
-
-        return times;
-    }
-
-    public List<DateTime> GetDepartureTimes(DateTime startDate, DateTime endDate, List<Pet> pets)
-    {
-        List<DateTime> times = [];
-        var reservations = reservationsRepository.GetOverlappingReservations(startDate, endDate);
-        var currentTime = GetFirstTime(startDate);
-
-        while (currentTime < endDate)
-        {
-            if (MaxCapacityReached(currentTime, pets))
-            {
-                // Cannot end a reservation after the max capacity is reached
-                break;
-            }
-
-            if (!IsOpenAt(currentTime) || AnyReservationAtTime(currentTime, reservations))
-            {
-                currentTime = GetNextTime(currentTime);
-                continue;
-            }
-
-            times.Add(currentTime);
-            currentTime = GetNextTime(currentTime);
-        }
-
-        return times;
     }
 
     private bool MaxCapacityReached(DateTime currentTime, List<Pet> pets)
