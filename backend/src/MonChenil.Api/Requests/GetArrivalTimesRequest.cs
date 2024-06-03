@@ -6,5 +6,5 @@ public record GetArrivalTimesRequest
 {
     public DateTime StartDate { get; init; } = DateTime.Now;
     public DateTime EndDate { get; init; } = DateTime.Now.Date.AddDays(1);
-    public List<PetId> PetIds { get; init; } = [];
+    public List<string> PetIdsAsString { get; init; } = [];
 }

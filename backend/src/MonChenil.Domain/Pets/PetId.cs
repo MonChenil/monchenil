@@ -16,4 +16,6 @@ public record PetId
 
         Value = value;
     }
+
+    public static PetId FromString(string value) => new(value);
 }
