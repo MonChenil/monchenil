@@ -32,6 +32,29 @@ export class ReservationsService {
     );
   }
 
+  getDepartureTimes(startDate: Date, endDate: Date) {
+    let formattedStartDate;
+    let formattedEndDate;
+
+    try {
+      formattedStartDate = formatDate(startDate, 'yyyy-MM-ddTHH:mm:ss', 'en');
+      formattedEndDate = formatDate(endDate, 'yyyy-MM-ddTHH:mm:ss', 'en');
+    } catch (error) {
+      console.error(error);
+      return of([]);
+    }
+
+    return this.http.get<string[]>(
+      `${environment.backendReservations}/departure-times`,
+      {
+        params: {
+          StartDate: formattedStartDate,
+          ...(endDate && { EndDate: formattedEndDate }),
+        },
+      },
+    );
+  }
+
   createReservation(reservation: any) {
     return this.http.post(environment.backendReservations, reservation);
   }
