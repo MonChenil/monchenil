@@ -86,7 +86,16 @@ public class ReservationsController : ControllerBase
     [HttpGet("arrival-times")]
     public IActionResult GetArrivalTimes([FromQuery] GetArrivalTimesRequest request)
     {
-        List<DateTime> arrivalTimes = reservationTimes.GetArrivalTimes(request.StartDate, request.EndDate);
+        var pets = petsRepository.GetPetsByIds(request.PetIds);
+        List<DateTime> arrivalTimes = reservationTimes.GetArrivalTimes(request.StartDate, request.EndDate, pets);
         return Ok(arrivalTimes);
+    }
+
+    [HttpGet("departure-times")]
+    public IActionResult GetDepartureTimes([FromQuery] GetDepartureTimesRequest request)
+    {
+        var pets = petsRepository.GetPetsByIds(request.PetIds);
+        List<DateTime> departureTimes = reservationTimes.GetDepartureTimes(request.StartDate, request.EndDate, pets);
+        return Ok(departureTimes);
     }
 }

@@ -15,17 +15,17 @@ public class ReservationTimes : IReservationTimes
         this.reservationsRepository = reservationsRepository;
     }
 
-    public List<DateTime> GetArrivalTimes(DateTime startDate, DateTime endDate, List<Pet> pets)
+    public List<DateTime> GetArrivalTimes(DateTime startDate, DateTime endDate, IEnumerable<Pet> pets)
     {
         return GetTimes(startDate, endDate, pets, true);
     }
 
-    public List<DateTime> GetDepartureTimes(DateTime startDate, DateTime endDate, List<Pet> pets)
+    public List<DateTime> GetDepartureTimes(DateTime startDate, DateTime endDate, IEnumerable<Pet> pets)
     {
         return GetTimes(startDate, endDate, pets, false);
     }
 
-    private List<DateTime> GetTimes(DateTime startDate, DateTime endDate, List<Pet> pets, bool breakOnMaxCapacity)
+    private List<DateTime> GetTimes(DateTime startDate, DateTime endDate, IEnumerable<Pet> pets, bool breakOnMaxCapacity)
     {
         List<DateTime> times = [];
         var reservations = reservationsRepository.GetOverlappingReservations(startDate, endDate);
@@ -86,11 +86,11 @@ public class ReservationTimes : IReservationTimes
         return reservations.Any(reservation => reservation.StartDate == time || reservation.EndDate == time);
     }
 
-    private bool MaxCapacityReached(DateTime currentTime, List<Pet> pets)
+    private bool MaxCapacityReached(DateTime currentTime, IEnumerable<Pet> pets)
     {
         var overlappingReservations = reservationsRepository.GetOverlappingReservations(currentTime, currentTime.AddMinutes(INTERVAL_MINUTES));
         int petCount = overlappingReservations.SelectMany(reservation => reservation.Pets).Count();
-        petCount += pets.Count;
+        petCount += pets.Count();
 
 
         return petCount > MAX_CAPACITY;
