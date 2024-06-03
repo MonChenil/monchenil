@@ -1,7 +1,10 @@
 import { formatDate } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ReservationsService } from '../services/reservations.service';
+import { Reservation } from '../models/reservation';
+import { BehaviorSubject, switchMap } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-reservations-page',
@@ -10,7 +13,6 @@ import { ReservationsService } from '../services/reservations.service';
 export class ReservationsPageComponent {
   minStartDate: Date;
   minEndDate: Date;
-
   reservationForm: FormGroup;
 
   constructor(private formBuilder: FormBuilder, private reservationsService: ReservationsService) {
@@ -32,21 +34,31 @@ export class ReservationsPageComponent {
     });
   }
 
+  refresh$ = new BehaviorSubject(null);
+  reservations$ = this.refresh$.pipe(
+    switchMap(() => this.reservationsService.getReservations()),
+  );
+
+  refresh() {
+    console.log('refresh')
+    this.refresh$.next(null);
+  }
+
   onSubmit() {
-    const reservation = this.prepareDataToSend();
-    this.reservationsService.createReservation(reservation).subscribe(
-      () => {
+    const reservationToAdd = this.prepareDataToSend();
+    this.reservationsService.createReservation(reservationToAdd).subscribe({
+      next: () => {
         this.onReset();
+        this.refresh();
       },
-      (error) => {
-        console.error(error);
+      error: (error: HttpErrorResponse) => {
+        this.reservationForm.setErrors({ httpError: error.error });
       },
-    );
+    });
   }
 
   onReset() {
     ({ startDay: this.minStartDate, endDay: this.minEndDate } = this.initDates());
-    console.log(this.minStartDate, this.minEndDate)
     this.reservationForm.reset({
       pets: [],
       startDay: formatDate(this.minStartDate, 'yyyy-MM-dd', 'en'),
