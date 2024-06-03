@@ -36,6 +36,8 @@ export class ReservationsPageComponent {
   }
 
   onSubmit() {
+    const startDay: string = this.reservationForm.get('startDay')!.value + this.reservationForm.get('startDayTime')!.value + ':00:00';
+    const endDay: string = this.reservationForm.get('endDay')!.value + this.reservationForm.get('endDayTime')!.value + ':00:00';
     console.log(this.reservationForm.value);
   }
 }
