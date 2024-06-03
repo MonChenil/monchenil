@@ -17,7 +17,7 @@ public class ReservationTimes : IReservationTimes
 
     public List<DateTime> GetArrivalTimes(DateTime startDate, DateTime endDate, IEnumerable<Pet> pets)
     {
-        return GetTimes(startDate, endDate, pets, true);
+        return GetTimes(startDate, endDate, pets, false);
     }
 
     public List<DateTime> GetDepartureTimes(DateTime startDate, DateTime endDate, IEnumerable<Pet> pets)

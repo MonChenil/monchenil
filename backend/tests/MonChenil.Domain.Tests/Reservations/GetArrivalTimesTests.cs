@@ -154,4 +154,122 @@ public class GetArrivalTimesTests
         Assert.Equal(expectedTimes, result);
     }
 
+    [Fact]
+    public void GetArrivalTimes_MaxCapacityReachedByOneReservation_ShouldNotReturnTimesAfterThatReservationStart()
+    {
+        List<Pet> pets = [
+            new Dog(new("287383724237054"), "name", "ownerId"),
+            new Dog(new("480531850353143"), "name", "ownerId"),
+            new Dog(new("358488615963723"), "name", "ownerId"),
+        ];
+
+        Reservation existingReservation = new(new(Guid.NewGuid()), "", new(2024, 1, 3, 11, 0, 0), new(2024, 1, 4, 11, 0, 0));
+        existingReservation.AddPets(pets);
+        _reservationsRepository.AddReservation(existingReservation);
+
+        DateTime startDate = new(2024, 1, 3, 9, 0, 0);
+        DateTime endDate = new(2024, 1, 3, 23, 0, 0);
+        List<DateTime> expectedTimes = [
+            new(2024, 1, 3, 9, 0, 0),
+            new(2024, 1, 3, 9, 30, 0),
+            new(2024, 1, 3, 10, 0, 0),
+            new(2024, 1, 3, 10, 30, 0),
+        ];
+
+        List<DateTime> arrivalTimes = _reservationTimes.GetArrivalTimes(startDate, endDate, pets);
+
+        Assert.Equal(expectedTimes, arrivalTimes);
+    }
+
+    [Fact]
+    public void GetArrivalTimes_MaxCapacityReachedByOneReservation_ShouldReturnTimesAfterThatReservationEnd()
+    {
+        List<Pet> pets = [
+            new Dog(new("287383724237054"), "name", "ownerId"),
+            new Dog(new("480531850353143"), "name", "ownerId"),
+            new Dog(new("358488615963723"), "name", "ownerId"),
+        ];
+
+        Reservation existingReservation = new(new(Guid.NewGuid()), "", new(2024, 1, 3, 11, 0, 0), new(2024, 1, 4, 11, 0, 0));
+        existingReservation.AddPets(pets);
+        _reservationsRepository.AddReservation(existingReservation);
+
+        DateTime startDate = new(2024, 1, 4, 11, 0, 0);
+        DateTime endDate = new(2024, 1, 4, 13, 0, 0);
+        List<DateTime> expectedTimes = [
+            new(2024, 1, 4, 11, 30, 0),
+            new(2024, 1, 4, 12, 0, 0),
+            new(2024, 1, 4, 12, 30, 0),
+        ];
+
+        List<DateTime> arrivalTimes = _reservationTimes.GetArrivalTimes(startDate, endDate, pets);
+
+        Assert.Equal(expectedTimes, arrivalTimes);
+    }
+
+    [Fact]
+    public void GetArrivalTimes_MaxCapacityReachedByStackedReservations_ShouldNotReturnTimesAfterMaxCapacityReached()
+    {
+        List<Pet> pets = [
+            new Dog(new("287383724237054"), "name", "ownerId"),
+            new Dog(new("480531850353143"), "name", "ownerId"),
+            new Dog(new("358488615963723"), "name", "ownerId"),
+            new Dog(new("358488615963723"), "name", "ownerId"),
+        ];
+
+        Reservation r1 = new(new(Guid.NewGuid()), "", new(2024, 1, 3, 10, 0, 0), new(2024, 1, 4, 10, 0, 0));
+        r1.AddPets([pets[0]]);
+
+        Reservation r2 = new(new(Guid.NewGuid()), "", new(2024, 1, 3, 11, 30, 0), new(2024, 1, 4, 11, 30, 0));
+        r2.AddPets([pets[1], pets[2]]);
+
+        _reservationsRepository.AddReservation(r1);
+        _reservationsRepository.AddReservation(r2);
+
+        DateTime startDate = new(2024, 1, 3, 9, 0, 0);
+        DateTime endDate = new(2024, 1, 3, 23, 0, 0);
+        List<DateTime> expectedTimes = [
+            new(2024, 1, 3, 9, 0, 0),
+            new(2024, 1, 3, 9, 30, 0),
+            new(2024, 1, 3, 10, 30, 0),
+            new(2024, 1, 3, 11, 0, 0),
+        ];
+
+        List<DateTime> arrivalTimes = _reservationTimes.GetArrivalTimes(startDate, endDate, [pets[2]]);
+
+        Assert.Equal(expectedTimes, arrivalTimes);
+    }
+
+    [Fact]
+    public void GetArrivalTimes_MaxCapacityReachedByStackedReservations_ShouldReturnTimesWhenThereIsRoomAgain()
+    {
+        List<Pet> pets = [
+            new Dog(new("287383724237054"), "name", "ownerId"),
+            new Dog(new("480531850353143"), "name", "ownerId"),
+            new Dog(new("358488615963723"), "name", "ownerId"),
+            new Dog(new("358488615963723"), "name", "ownerId"),
+        ];
+
+        Reservation r1 = new(new(Guid.NewGuid()), "", new(2024, 1, 3, 10, 0, 0), new(2024, 1, 4, 10, 0, 0));
+        r1.AddPets([pets[0]]);
+
+        Reservation r2 = new(new(Guid.NewGuid()), "", new(2024, 1, 3, 11, 30, 0), new(2024, 1, 4, 11, 30, 0));
+        r2.AddPets([pets[1], pets[2]]);
+
+        _reservationsRepository.AddReservation(r1);
+        _reservationsRepository.AddReservation(r2);
+
+        DateTime startDate = new(2024, 1, 4, 10, 0, 0);
+        DateTime endDate = new(2024, 1, 4, 13, 0, 0);
+        List<DateTime> expectedTimes = [
+            new(2024, 1, 4, 10, 30, 0),
+            new(2024, 1, 4, 11, 0, 0),
+            new(2024, 1, 4, 12, 0, 0),
+            new(2024, 1, 4, 12, 30, 0),
+        ];
+
+        List<DateTime> arrivalTimes = _reservationTimes.GetArrivalTimes(startDate, endDate, [pets[2]]);
+
+        Assert.Equal(expectedTimes, arrivalTimes);
+    }
 }

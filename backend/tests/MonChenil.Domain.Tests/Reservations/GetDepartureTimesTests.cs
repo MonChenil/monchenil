@@ -113,7 +113,7 @@ public class GetDepartureTimesTests
         _reservationsRepository.AddReservation(existingReservation);
 
         DateTime startDate = new(2024, 1, 3, 9, 0, 0);
-        DateTime endDate = new(2024, 1, 4, 23, 0, 0);
+        DateTime endDate = new(2024, 1, 3, 23, 0, 0);
         List<DateTime> expectedTimes = [
             new(2024, 1, 3, 9, 0, 0),
             new(2024, 1, 3, 9, 30, 0),
