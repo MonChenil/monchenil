@@ -22,7 +22,7 @@ public class ReservationTimes : IReservationTimes
 
     public List<DateTime> GetDepartureTimes(DateTime startDate, DateTime endDate, IEnumerable<Pet> pets)
     {
-        return GetTimes(startDate, endDate, pets, false);
+        return GetTimes(startDate, endDate, pets, true);
     }
 
     private List<DateTime> GetTimes(DateTime startDate, DateTime endDate, IEnumerable<Pet> pets, bool breakOnMaxCapacity)

@@ -5,6 +5,7 @@ namespace MonChenil.Domain.Tests.Reservations;
 
 public class GetDepartureTimesTests
 {
+    // @note: Kennel max capacity is assumed to be 3 pets
     private readonly IReservationsRepository _reservationsRepository;
     private readonly IReservationTimes _reservationTimes;
 
@@ -101,8 +102,6 @@ public class GetDepartureTimesTests
     [Fact]
     public void GetDepartureTimes_MaxCapacityReachedByOneReservation_ShouldNotReturnTimesAfterThatReservationStart()
     {
-        // MAX_CAPACITY = 3;
-
         List<Pet> pets = [
             new Dog(new("287383724237054"), "name", "ownerId"),
             new Dog(new("480531850353143"), "name", "ownerId"),
@@ -114,7 +113,7 @@ public class GetDepartureTimesTests
         _reservationsRepository.AddReservation(existingReservation);
 
         DateTime startDate = new(2024, 1, 3, 9, 0, 0);
-        DateTime endDate = new(2024, 1, 3, 23, 0, 0);
+        DateTime endDate = new(2024, 1, 4, 23, 0, 0);
         List<DateTime> expectedTimes = [
             new(2024, 1, 3, 9, 0, 0),
             new(2024, 1, 3, 9, 30, 0),
@@ -128,10 +127,30 @@ public class GetDepartureTimesTests
     }
 
     [Fact]
+    public void GetDepartureTimes_MaxCapacityReachedByOneReservation_ShouldNotReturnTimesAfterThatReservationEnd()
+    {
+        List<Pet> pets = [
+            new Dog(new("287383724237054"), "name", "ownerId"),
+            new Dog(new("480531850353143"), "name", "ownerId"),
+            new Dog(new("358488615963723"), "name", "ownerId"),
+        ];
+
+        Reservation existingReservation = new(new(Guid.NewGuid()), "", new(2024, 1, 3, 11, 0, 0), new(2024, 1, 4, 11, 0, 0));
+        existingReservation.AddPets(pets);
+        _reservationsRepository.AddReservation(existingReservation);
+
+        DateTime startDate = new(2024, 1, 4, 11, 0, 0);
+        DateTime endDate = new(2024, 1, 4, 13, 0, 0);
+        List<DateTime> expectedTimes = [];
+
+        List<DateTime> departureTimes = _reservationTimes.GetDepartureTimes(startDate, endDate, pets);
+
+        Assert.Equal(expectedTimes, departureTimes);
+    }
+
+    [Fact]
     public void GetDepartureTimes_MaxCapacityReachedByStackedReservations_ShouldNotReturnTimesAfterMaxCapacityReached()
     {
-        // MAX_CAPACITY = 3;
-
         List<Pet> pets = [
             new Dog(new("287383724237054"), "name", "ownerId"),
             new Dog(new("480531850353143"), "name", "ownerId"),
@@ -156,6 +175,34 @@ public class GetDepartureTimesTests
             new(2024, 1, 3, 10, 30, 0),
             new(2024, 1, 3, 11, 0, 0),
         ];
+
+        List<DateTime> departureTimes = _reservationTimes.GetDepartureTimes(startDate, endDate, [pets[2]]);
+
+        Assert.Equal(expectedTimes, departureTimes);
+    }
+
+    [Fact]
+    public void GetDepartureTimes_MaxCapacityReachedByStackedReservations_ShouldNotReturnTimesWhenThereIsRoomAgain()
+    {
+        List<Pet> pets = [
+            new Dog(new("287383724237054"), "name", "ownerId"),
+            new Dog(new("480531850353143"), "name", "ownerId"),
+            new Dog(new("358488615963723"), "name", "ownerId"),
+            new Dog(new("358488615963723"), "name", "ownerId"),
+        ];
+
+        Reservation r1 = new(new(Guid.NewGuid()), "", new(2024, 1, 3, 10, 0, 0), new(2024, 1, 4, 10, 0, 0));
+        r1.AddPets([pets[0]]);
+
+        Reservation r2 = new(new(Guid.NewGuid()), "", new(2024, 1, 3, 11, 30, 0), new(2024, 1, 4, 11, 30, 0));
+        r2.AddPets([pets[1], pets[2]]);
+
+        _reservationsRepository.AddReservation(r1);
+        _reservationsRepository.AddReservation(r2);
+
+        DateTime startDate = new(2024, 1, 4, 10, 0, 0);
+        DateTime endDate = new(2024, 1, 4, 13, 0, 0);
+        List<DateTime> expectedTimes = [];
 
         List<DateTime> departureTimes = _reservationTimes.GetDepartureTimes(startDate, endDate, [pets[2]]);
 
