@@ -10,6 +10,8 @@ import { SharedModule } from '../shared/shared.module';
 import { ReservationHoursListComponent } from './components/reservation-hours-list/reservation-hours-list.component';
 import { ReservationHoursCardComponent } from './components/reservation-hours-card/reservation-hours-card.component';
 import { ReservationsService } from './services/reservations.service';
+import { ReservationsListComponent } from './components/reservations-list/reservations-list.component';
+import { ReservationsCardComponent } from './components/reservations-card/reservations-card.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +22,9 @@ import { ReservationsService } from './services/reservations.service';
     ReservationHoursListComponent,
     ReservationHoursCardComponent,
     SelectStartDateComponent,
-    SelectEndDateComponent
+    SelectEndDateComponent,
+    ReservationsListComponent,
+    ReservationsCardComponent
   ],
   imports: [CommonModule, SharedModule],
   providers: [ReservationsService],

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { Reservation } from '../models/reservation';
 
 @Injectable()
 export class ReservationsService {
@@ -33,5 +34,13 @@ export class ReservationsService {
 
   createReservation(reservation: any) {
     return this.http.post(environment.backendReservations, reservation);
+  }
+
+  getReservations() {
+    return this.http.get<Reservation[]>(environment.backendReservations);
+  }
+
+  deleteReservation(id: string) {
+    return this.http.delete(`${environment.backendReservations}/${id}`);
   }
 }
