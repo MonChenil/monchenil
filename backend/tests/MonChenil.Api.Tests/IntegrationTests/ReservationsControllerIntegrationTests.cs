@@ -1,46 +1,67 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
 using MonChenil.Api.Requests;
+using MonChenil.Data;
 using MonChenil.Domain.Pets;
 using MonChenil.Domain.Reservations;
+using MonChenil.Infrastructure.Users;
 using System.Net;
 using System.Net.Http.Json;
 
 namespace MonChenil.Api.Tests.IntegrationTests
 {
-    public class ReservationsControllerIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+    public class ReservationsControllerIntegrationTests : BaseIntegrationTests
     {
-        private readonly WebApplicationFactory<Program> _factory;
-        private readonly HttpClient _client;
-        private readonly object _testUser = new
-        {
-            email = "test@example.com",
-            password = "pTtlry08cy11*"
-        };
+        private const string TEST_USER_EMAIL = "TEST_USER_EMAIL@example.com";
+        private const string RESERVATION_TEST_USER_PASSWORD = "pTtlry08cy11*";
 
-        public ReservationsControllerIntegrationTests(WebApplicationFactory<Program> factory)
+        public ReservationsControllerIntegrationTests(WebApplicationFactory<Program> factory) : base(factory)
         {
-            _factory = factory;
-            _client = _factory.CreateClient();
+            using var scope = Factory.Services.CreateScope();
+            var services = scope.ServiceProvider;
+            var context = services.GetRequiredService<ApplicationDbContext>();
+            var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+            EnsureTestUserCreated(context, userManager);
+            EnsureTestPetCreated(context);
         }
 
-        private async Task EnsureAuthenticated()
+        private void EnsureTestPetCreated(ApplicationDbContext context)
         {
-            var registerResponse = await RegisterTestUser();
-            if (!registerResponse.IsSuccessStatusCode)
+            var testUser = context.Users.Where(u => u.Email == TEST_USER_EMAIL).FirstOrDefault();
+            Assert.NotNull(testUser);
+
+            Pet testPet = new Cat(
+                new PetId("123456789012345"),
+                "TestPet",
+                testUser.Id
+            );
+
+            var pet = context.Pets.Find(testPet.Id);
+            if (pet != null)
             {
-                var loginResponse = await LoginTestUser();
-                loginResponse.EnsureSuccessStatusCode();
+                return;
             }
+
+            context.Pets.Add(testPet);
+            context.SaveChanges();
         }
 
-        private async Task<HttpResponseMessage> RegisterTestUser()
+        private static void EnsureTestUserCreated(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
-            return await _client.PostAsJsonAsync("/register", _testUser);
-        }
+            var user = context.Users.Find(TEST_USER_EMAIL);
+            if (user != null)
+            {
+                return;
+            }
 
-        private async Task<HttpResponseMessage> LoginTestUser()
-        {
-            return await _client.PostAsJsonAsync("/login?useCookies=true", _testUser);
+            var applicationUser = new ApplicationUser
+            {
+                Email = TEST_USER_EMAIL,
+                UserName = TEST_USER_EMAIL,
+            };
+
+            userManager.CreateAsync(applicationUser, RESERVATION_TEST_USER_PASSWORD).Wait();
         }
 
         [Fact]
@@ -48,7 +69,7 @@ namespace MonChenil.Api.Tests.IntegrationTests
         {
             await EnsureAuthenticated();
 
-            var response = await _client.GetAsync("/reservations");
+            var response = await Client.GetAsync("/reservations");
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
@@ -56,7 +77,7 @@ namespace MonChenil.Api.Tests.IntegrationTests
         [Fact]
         public async Task ReservationPage_NotDisplayed_WhenUserIsNotAuthenticated()
         {
-            var response = await _client.GetAsync("/reservations");
+            var response = await Client.GetAsync("/reservations");
 
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
@@ -69,13 +90,13 @@ namespace MonChenil.Api.Tests.IntegrationTests
             var newReservationRequest = new CreateReservationRequest(
                 StartDate: DateTime.Now.AddDays(1),
                 EndDate: DateTime.Now.AddDays(2),
-                PetIds: new List<PetId> { new PetId("123456789012345") }
+                PetIds: [new PetId("123456789012345")]
             );
 
-            var createResponse = await _client.PostAsJsonAsync("/reservations", newReservationRequest);
+            var createResponse = await Client.PostAsJsonAsync("/reservations", newReservationRequest);
             Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
 
-            var response = await _client.GetAsync("/reservations");
+            var response = await Client.GetAsync("/reservations");
             var reservations = await response.Content.ReadFromJsonAsync<List<Reservation>>();
             Assert.NotNull(reservations);
             Assert.NotEmpty(reservations);

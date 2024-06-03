@@ -8,51 +8,32 @@ using MonChenil.Data;
 
 namespace MonChenil.Api.Tests.IntegrationTests
 {
-    public class PetsControllerIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+    public class PetsControllerIntegrationTests : BaseIntegrationTests
     {
-        private readonly WebApplicationFactory<Program> _factory;
-
-        private HttpClient Client { get; init; }
-        private object TestUser { get; } = new
+        private const string TEST_PET_ID = "701605119112944";
+        public PetsControllerIntegrationTests(WebApplicationFactory<Program> factory) : base(factory)
         {
-            email = "test@example.com",
-            password = "pTtlry08cy11*"
-        };
-
-        public PetsControllerIntegrationTests(WebApplicationFactory<Program> factory)
-        {
-            _factory = factory;
-            Client = _factory.CreateClient();
             InitializeDatabase();
         }
 
         private void InitializeDatabase()
         {
-            using var scope = _factory.Services.CreateScope();
+            using var scope = Factory.Services.CreateScope();
             var services = scope.ServiceProvider;
             var context = services.GetRequiredService<ApplicationDbContext>();
-            context.Pets.RemoveRange(context.Pets);
+            EnsureTestPetDeleted(context);
             context.SaveChanges();
         }
 
-        private async Task EnsureAuthenticated()
+        private static void EnsureTestPetDeleted(ApplicationDbContext context)
         {
-            var registerResponse = await RegisterTestUser();
-            if (!registerResponse.IsSuccessStatusCode)
+            var testPet = context.Pets.Find(new PetId(TEST_PET_ID));
+            if (testPet == null)
             {
-                var loginResponse = await LoginTestUser();
-                loginResponse.EnsureSuccessStatusCode();
+                return;
             }
-        }
 
-        private async Task<HttpResponseMessage> RegisterTestUser()
-        {
-            return await Client.PostAsJsonAsync("/register", TestUser);
-        }
-
-        private async Task<HttpResponseMessage> LoginTestUser()
-        {
-            return await Client.PostAsJsonAsync("/login?useCookies=true", TestUser);
+            context.Pets.Remove(testPet);
         }
 
         [Fact]
@@ -76,8 +57,8 @@ namespace MonChenil.Api.Tests.IntegrationTests
         public async Task CreatePet_ReturnsOk_AndCreatesPet_WhenPetIdIsValid()
         {
             await EnsureAuthenticated();
-            
-            var validPetIdRequest = new CreatePetRequest(new PetId("123456789012345"), "Fluffy", PetType.Dog);
+
+            var validPetIdRequest = new CreatePetRequest(new PetId(TEST_PET_ID), "Fluffy", PetType.Dog);
             var createResponse = await Client.PostAsJsonAsync("/pets", validPetIdRequest);
             Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
 
