@@ -20,16 +20,12 @@ namespace MonChenil.Api.Tests.IntegrationTests
         {
             Factory = factory;
             Client = Factory.CreateClient();
+            RegisterTestUser().Wait();
         }
 
         protected async Task EnsureAuthenticated()
         {
-            var registerResponse = await RegisterTestUser();
-            if (!registerResponse.IsSuccessStatusCode)
-            {
-                var loginResponse = await LoginTestUser();
-                loginResponse.EnsureSuccessStatusCode();
-            }
+            await LoginTestUser();
         }
 
         private async Task<HttpResponseMessage> RegisterTestUser()
