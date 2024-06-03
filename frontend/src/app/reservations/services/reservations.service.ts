@@ -30,4 +30,8 @@ export class ReservationsService {
       },
     );
   }
+
+  createReservation(reservation: any) {
+    return this.http.post(environment.backendReservations, reservation);
+  }
 }
