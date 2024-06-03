@@ -1,55 +1,56 @@
 <div class="card bg-base-100 shadow-xl sm:min-w-96">
-  <form
-    class="card-body space-y-2"
-    [formGroup]="registerForm"
-    (ngSubmit)="onSubmit()"
-  >
-    <h1 class="text-2xl font-bold">Créer un compte</h1>
-
-    <app-input
-      label="Votre email"
-      type="email"
-      placeholder="johndoe@website.com"
-      [control]="registerForm.controls.email"
-      [errorMessage]="getErrorMessage('email')"
-    ></app-input>
-
-    <app-input
-      label="Mot de passe"
-      type="password"
-      placeholder="••••••••"
-      [control]="registerForm.controls.password"
-      [errorMessage]="getErrorMessage('password')"
-    ></app-input>
-
-    <app-input
-      label="Confirmer mot de passe"
-      type="password"
-      placeholder="••••••••"
-      [control]="registerForm.controls.confirmPassword"
-      [errorMessage]="getErrorMessage('confirmPassword')"
-    ></app-input>
-
-    @if (getErrorMessage("")) {
-      <small class="text-error">{{ getErrorMessage("") }}</small>
-    }
-
-    <button
-      type="submit"
-      class="btn btn-primary"
-      [disabled]="registerForm.invalid"
+    <form
+        class="card-body space-y-2"
+        [formGroup]="registerForm"
+        (ngSubmit)="onSubmit()"
     >
-      Créer un compte
-    </button>
+        <h1 class="text-2xl font-bold">Créer un compte</h1>
 
-    <small class="text-neutral">
-      Vous avez déjà un compte ?
-      <a
-        routerLink="/auth/login"
-        class="link-hover link font-medium text-primary"
-      >
-        Se connecter
-      </a>
-    </small>
-  </form>
+        <app-input
+            label="Votre email"
+            type="email"
+            placeholder="johndoe@website.com"
+            [control]="registerForm.controls.email"
+            [errorMessage]="getErrorMessage('email')"
+        ></app-input>
+
+        <app-input
+            label="Mot de passe"
+            type="password"
+            placeholder="••••••••"
+            [control]="registerForm.controls.password"
+            [errorMessage]="getErrorMessage('password')"
+        ></app-input>
+
+        <app-input
+            label="Confirmer mot de passe"
+            type="password"
+            placeholder="••••••••"
+            [control]="registerForm.controls.confirmPassword"
+            [errorMessage]="getErrorMessage('confirmPassword')"
+        ></app-input>
+
+        @if (getErrorMessage("")) {
+            <small class="text-error">{{ getErrorMessage("") }}</small>
+        }
+
+        <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="registerForm.invalid"
+        >
+            Créer un compte
+        </button>
+
+        <small class="text-neutral">
+            Vous avez déjà un compte ?
+            <a
+                class="link-hover link font-medium text-primary"
+                routerLink="/auth/login"
+                [queryParams]="{ redirectUrl: redirectUrl }"
+            >
+                Se connecter
+            </a>
+        </small>
+    </form>
 </div>

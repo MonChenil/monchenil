@@ -1,43 +1,44 @@
 <div class="card bg-base-100 shadow-xl sm:min-w-96">
-  <form class="card-body space-y-2" (ngSubmit)="onSubmit()">
-    <header>
-      <h1 class="text-2xl font-bold">Se connecter</h1>
-      @if (getErrorMessage("")) {
-        <small class="text-error">{{ getErrorMessage("") }}</small>
-      }
-    </header>
+    <form class="card-body space-y-2" (ngSubmit)="onSubmit()">
+        <header>
+            <h1 class="text-2xl font-bold">Se connecter</h1>
+            @if (getErrorMessage("")) {
+                <small class="text-error">{{ getErrorMessage("") }}</small>
+            }
+        </header>
 
-    <app-input
-      label="Votre email"
-      type="email"
-      placeholder="test@example.com"
-      [control]="loginForm.controls.email"
-      [errorMessage]="getErrorMessage('email')"
-    ></app-input>
+        <app-input
+            label="Votre email"
+            type="email"
+            placeholder="test@example.com"
+            [control]="loginForm.controls.email"
+            [errorMessage]="getErrorMessage('email')"
+        ></app-input>
 
-    <app-input
-      label="Mot de passe"
-      type="password"
-      placeholder="••••••••"
-      [control]="loginForm.controls.password"
-      [errorMessage]="getErrorMessage('password')"
-    ></app-input>
+        <app-input
+            label="Mot de passe"
+            type="password"
+            placeholder="••••••••"
+            [control]="loginForm.controls.password"
+            [errorMessage]="getErrorMessage('password')"
+        ></app-input>
 
-    <button
-      type="submit"
-      class="btn btn-primary"
-      [disabled]="loginForm.invalid"
-    >
-      Se connecter
-    </button>
+        <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="loginForm.invalid"
+        >
+            Se connecter
+        </button>
 
-    <small class="text-neutral">
-      Vous n'avez pas de compte ?
-      <a
-        routerLink="/auth/register"
-        class="link-hover link font-medium text-primary"
-        >Créer un compte</a
-      >
-    </small>
-  </form>
+        <small class="text-neutral">
+            Vous n'avez pas de compte ?
+            <a
+                class="link-hover link font-medium text-primary"
+                routerLink="/auth/register"
+                [queryParams]="{ redirectUrl: redirectUrl }"
+                >Créer un compte</a
+            >
+        </small>
+    </form>
 </div>

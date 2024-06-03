@@ -1,14 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { PetsPageComponent } from './pets/pages/pets-page/pets-page.component';
 import { ReservationsPageComponent } from './reservations/pages/reservations-page.component';
+import { isAuthenticatedGuard } from './auth/guards/is-authenticated.guard';
 
 const routes: Routes = [
-  {
-    path: 'dashboard',
-    component: DashboardComponent,
-  },
   {
     path: 'auth',
     loadChildren: () => import('./auth/auth.module').then((m) => m.AuthModule),
@@ -16,13 +12,15 @@ const routes: Routes = [
   {
     path: 'pets',
     component: PetsPageComponent,
+    canActivate: [isAuthenticatedGuard],
   },
   {
     path: 'reservations',
     component: ReservationsPageComponent,
+    canActivate: [isAuthenticatedGuard],
   },
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-  { path: '**', redirectTo: 'dashboard' },
+  { path: '', redirectTo: 'reservations', pathMatch: 'full' },
+  { path: '**', redirectTo: 'reservations' },
 ];
 
 @NgModule({

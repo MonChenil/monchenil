@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -12,7 +12,10 @@ export class LoginPageComponent {
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private router: Router,
+    private route: ActivatedRoute,
   ) {}
+
+  redirectUrl = this.route.snapshot.queryParams['redirectUrl'] || '/';
 
   loginForm = this.formBuilder.group({
     email: ['', [Validators.required, Validators.email]],
@@ -26,7 +29,7 @@ export class LoginPageComponent {
 
     this.authService.login(this.loginForm.value).subscribe({
       next: () => {
-        this.router.navigate(['/']);
+        this.router.navigate([this.redirectUrl]);
       },
       error: (error) => {
         this.loginForm.setErrors({ invalidCredentials: true });
