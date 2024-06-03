@@ -30,6 +30,6 @@ public class Reservation
 
     public bool Overlaps(DateTime startDate, DateTime endDate)
     {
-        return StartDate < endDate && EndDate > startDate;
+        return StartDate < endDate && EndDate >= startDate;
     }
 }
