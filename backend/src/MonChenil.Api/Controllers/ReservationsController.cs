@@ -86,7 +86,7 @@ public class ReservationsController : ControllerBase
     [HttpGet("arrival-times")]
     public IActionResult GetArrivalTimes([FromQuery] GetArrivalTimesRequest request)
     {
-        var petIds = request.PetIdsAsString.Select(PetId.FromString).ToList();
+        var petIds = request.PetIds.Select(PetId.FromString).ToList();
         var pets = petsRepository.GetPetsByIds(petIds);
         List<DateTime> arrivalTimes = reservationTimes.GetArrivalTimes(request.StartDate, request.EndDate, pets);
         return Ok(arrivalTimes);
@@ -95,7 +95,7 @@ public class ReservationsController : ControllerBase
     [HttpGet("departure-times")]
     public IActionResult GetDepartureTimes([FromQuery] GetDepartureTimesRequest request)
     {
-        var petIds = request.PetIdsAsString.Select(PetId.FromString).ToList();
+        var petIds = request.PetIds.Select(PetId.FromString).ToList();
         var pets = petsRepository.GetPetsByIds(petIds);
         List<DateTime> departureTimes = reservationTimes.GetDepartureTimes(request.StartDate, request.EndDate, pets);
         return Ok(departureTimes);

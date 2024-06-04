@@ -105,7 +105,6 @@ public class ReservationTimes : IReservationTimes
         int petCount = overlappingReservations.SelectMany(reservation => reservation.Pets).Count();
         petCount += pets.Count();
 
-
         return petCount > MAX_CAPACITY;
     }
 }
