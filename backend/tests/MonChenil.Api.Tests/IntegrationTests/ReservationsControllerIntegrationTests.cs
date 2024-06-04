@@ -24,9 +24,10 @@ namespace MonChenil.Api.Tests.IntegrationTests
             var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
             EnsureTestUserCreated(context, userManager);
             EnsureTestPetCreated(context);
+            EnsureTestReservationsDeleted(context);
         }
 
-        private void EnsureTestPetCreated(ApplicationDbContext context)
+        private static void EnsureTestPetCreated(ApplicationDbContext context)
         {
             var testUser = context.Users.Where(u => u.Email == TEST_USER_EMAIL).FirstOrDefault();
             Assert.NotNull(testUser);
@@ -64,6 +65,12 @@ namespace MonChenil.Api.Tests.IntegrationTests
             userManager.CreateAsync(applicationUser, RESERVATION_TEST_USER_PASSWORD).Wait();
         }
 
+        private static void EnsureTestReservationsDeleted(ApplicationDbContext context)
+        {
+            context.Reservations.RemoveRange(context.Reservations);
+            context.SaveChanges();
+        }
+
         [Fact]
         public async Task ReservationPage_Displayed_WhenUserIsAuthenticated()
         {
@@ -83,13 +90,16 @@ namespace MonChenil.Api.Tests.IntegrationTests
         }
 
         [Fact]
-        public async Task CreateReservation_ReturnsOk_AndAddsReservation()
+        public async Task CreateReservation_ReturnsOk_AndAddsReservation_WhenTimesAreAvailable()
         {
             await EnsureAuthenticated();
 
+            var startDate = DateTime.Now.Date.AddDays(1).AddHours(9).AddMinutes(30);
+            var endDate = DateTime.Now.Date.AddDays(2).AddHours(9).AddMinutes(30);
+
             var newReservationRequest = new CreateReservationRequest(
-                StartDate: DateTime.Now.AddDays(1),
-                EndDate: DateTime.Now.AddDays(2),
+                StartDate: startDate,
+                EndDate: endDate,
                 PetIds: [new PetId("123456789012345")]
             );
 
@@ -100,6 +110,24 @@ namespace MonChenil.Api.Tests.IntegrationTests
             var reservations = await response.Content.ReadFromJsonAsync<List<Reservation>>();
             Assert.NotNull(reservations);
             Assert.NotEmpty(reservations);
+            Assert.Contains(reservations, r => r.StartDate == startDate && r.EndDate == endDate);
+        }
+
+        [Fact]
+        public async Task CreateReservation_ReturnsOkThenBadRequest_WhenAddingReservationTwice()
+        {
+            await EnsureAuthenticated();
+
+            var newReservationRequest = new CreateReservationRequest(
+                StartDate: DateTime.Now.Date.AddDays(1).AddHours(9).AddMinutes(30),
+                EndDate: DateTime.Now.Date.AddDays(2).AddHours(9).AddMinutes(30),
+                PetIds: [new PetId("123456789012345")]
+            );
+
+            var createResponseA = await Client.PostAsJsonAsync("/reservations", newReservationRequest);
+            var createResponseB = await Client.PostAsJsonAsync("/reservations", newReservationRequest);
+            Assert.Equal(HttpStatusCode.OK, createResponseA.StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, createResponseB.StatusCode);
         }
     }
 }
