@@ -92,9 +92,11 @@ export class ReservationsPageComponent {
     this.refresh$.next(null);
 
     // Trigger validation to update sub components
-    this.reservationForm.get('startDay')?.updateValueAndValidity();
-    this.reservationForm.get('endDay')?.updateValueAndValidity();
-    this.reservationForm.get('pets')?.updateValueAndValidity();
+    for (const controlName in this.reservationForm.controls) {
+      this.reservationForm.get(controlName)?.updateValueAndValidity();
+      this.reservationForm.get(controlName)?.markAsPristine();
+      this.reservationForm.get(controlName)?.markAsUntouched();
+    }
   }
 
   onSubmit() {
