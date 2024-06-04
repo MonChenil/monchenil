@@ -43,23 +43,27 @@ public class ReservationsController : ControllerBase
     [Authorize]
     public IActionResult CreateReservation(CreateReservationRequest request)
     {
-        string currentUserId = GetCurrentUserId();
-        var reservationId = new ReservationId(Guid.NewGuid());
-        Reservation reservation;
+        var pets = petsRepository.GetPetsByIds(request.PetIds);
+        if (!reservationTimes.AreTimesAvailableForPets(request.StartDate, request.EndDate, pets))
+        {
+            return new BadRequestObjectResult($"The selected times are not available for the selected pets.");
+        }
         try
         {
-            reservation = new Reservation(reservationId, currentUserId, request.StartDate, request.EndDate);
+            string currentUserId = GetCurrentUserId();
+            var reservation = new Reservation(new(Guid.NewGuid()), currentUserId, request.StartDate, request.EndDate);
+            reservation.AddPets(pets);
+            reservationsRepository.AddReservation(reservation);
+            return Ok();
         }
         catch (ReservationEndDateException ex)
         {
             return new BadRequestObjectResult(ex.Message);
         }
-
-        var pets = petsRepository.GetPetsByIds(request.PetIds);
-        reservation.AddPets(pets);
-
-        reservationsRepository.AddReservation(reservation);
-        return Ok();
+        catch (ReservationDurationException ex)
+        {
+            return new BadRequestObjectResult(ex.Message);
+        }
     }
 
     [HttpDelete("{id:guid}")]
@@ -86,7 +90,7 @@ public class ReservationsController : ControllerBase
     [HttpGet("arrival-times")]
     public IActionResult GetArrivalTimes([FromQuery] GetArrivalTimesRequest request)
     {
-        var petIds = request.PetIdsAsString.Select(PetId.FromString).ToList();
+        var petIds = request.PetIds.Select(PetId.FromString).ToList();
         var pets = petsRepository.GetPetsByIds(petIds);
         List<DateTime> arrivalTimes = reservationTimes.GetArrivalTimes(request.StartDate, request.EndDate, pets);
         return Ok(arrivalTimes);
@@ -95,7 +99,7 @@ public class ReservationsController : ControllerBase
     [HttpGet("departure-times")]
     public IActionResult GetDepartureTimes([FromQuery] GetDepartureTimesRequest request)
     {
-        var petIds = request.PetIdsAsString.Select(PetId.FromString).ToList();
+        var petIds = request.PetIds.Select(PetId.FromString).ToList();
         var pets = petsRepository.GetPetsByIds(petIds);
         List<DateTime> departureTimes = reservationTimes.GetDepartureTimes(request.StartDate, request.EndDate, pets);
         return Ok(departureTimes);

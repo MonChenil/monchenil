@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
 import {
   Observable,
   catchError,
-  debounceTime,
+  combineLatest,
   of,
   startWith,
   switchMap,
@@ -27,9 +27,12 @@ export class SelectStartDateComponent implements OnInit {
   arrivalTimes$: Observable<string[]> = new Observable();
 
   ngOnInit() {
-    this.arrivalTimes$ = this.startDayControl.valueChanges.pipe(
-      startWith(this.startDayControl.value),
-      debounceTime(200),
+    this.arrivalTimes$ = combineLatest([
+      this.startDayControl.valueChanges.pipe(
+        startWith(this.startDayControl.value),
+      ),
+      this.petsControl.valueChanges.pipe(startWith(this.petsControl.value)),
+    ]).pipe(
       switchMap(() => this.getArrivalTimes()),
       catchError((error) => {
         console.error(error);
@@ -63,7 +66,11 @@ export class SelectStartDateComponent implements OnInit {
     endDate.setDate(endDate.getDate() + 1);
     endDate.setHours(0, 0, 0, 0);
 
-    return this.reservationsService.getArrivalTimes(startDate, endDate, this.petsControl.value);
+    return this.reservationsService.getArrivalTimes(
+      startDate,
+      endDate,
+      this.petsControl.value,
+    );
   }
 
   getErrorMessage(): string | null {

@@ -113,7 +113,7 @@ public class GetArrivalTimesTests
                 new List<Pet> { new Dog(new("287383724237054"), "name", "ownerId") },
                 new List<Reservation>
                 {
-                    new(new(Guid.NewGuid()), "", new(2020, 12, 31, 0, 30, 0), new(2024, 1, 1, 9, 30, 0)),
+                    new(new(Guid.NewGuid()), "", new(2023, 12, 31, 0, 30, 0), new(2024, 1, 1, 9, 30, 0)),
                     new(new(Guid.NewGuid()), "", new(2024, 1, 1, 10, 0, 0), new(2024, 1, 2, 1, 0, 0)),
                 },
                 new List<DateTime>

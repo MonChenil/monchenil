@@ -25,6 +25,12 @@ public class ReservationTimes : IReservationTimes
         return GetTimes(startDate, endDate, pets, true);
     }
 
+    public bool AreTimesAvailableForPets(DateTime startDate, DateTime endDate, IEnumerable<Pet> pets)
+    {
+        return GetArrivalTimes(startDate, startDate.AddMinutes(INTERVAL_MINUTES), pets).Contains(startDate)
+            && GetDepartureTimes(endDate, endDate.AddMinutes(INTERVAL_MINUTES), pets).Contains(endDate);
+    }
+
     private bool ArePetsAvailable(DateTime startDate, DateTime endDate, IEnumerable<Pet> pets)
     {
         var reservations = reservationsRepository.GetOverlappingReservations(startDate, endDate);
@@ -56,9 +62,9 @@ public class ReservationTimes : IReservationTimes
 
     private bool IsTimeAvailable(IEnumerable<Pet> pets, IEnumerable<Reservation> reservations, DateTime currentTime)
     {
-        return !MaxCapacityReached(currentTime, pets) 
-            && IsOpenAt(currentTime) 
-            && !AnyReservationAtTime(currentTime, reservations) 
+        return !MaxCapacityReached(currentTime, pets)
+            && IsOpenAt(currentTime)
+            && !AnyReservationAtTime(currentTime, reservations)
             && ArePetsAvailable(currentTime, currentTime.AddMinutes(INTERVAL_MINUTES), pets);
     }
 
@@ -104,7 +110,6 @@ public class ReservationTimes : IReservationTimes
         var overlappingReservations = reservationsRepository.GetOverlappingReservations(currentTime, currentTime.AddMinutes(INTERVAL_MINUTES));
         int petCount = overlappingReservations.SelectMany(reservation => reservation.Pets).Count();
         petCount += pets.Count();
-
 
         return petCount > MAX_CAPACITY;
     }
