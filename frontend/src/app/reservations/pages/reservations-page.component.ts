@@ -70,6 +70,10 @@ export class ReservationsPageComponent {
       return 'Vous ne pouvez pas sélectionner plus de trois animaux';
     }
 
+    if (field.errors['httpError']) {
+      return field.errors['httpError'].error;
+    }
+
     return null;
   }
 
@@ -100,7 +104,7 @@ export class ReservationsPageComponent {
         this.refresh();
       },
       error: (error: HttpErrorResponse) => {
-        this.reservationForm.setErrors({ httpError: error.error });
+        this.reservationForm.setErrors({ httpError: error });
       },
     });
   }

@@ -1,5 +1,5 @@
 <div class="reservationsPageContainer my-14">
-    <form class="flex flex-col" [formGroup]="reservationForm" (ngSubmit)="onSubmit()">
+    <form class="flex flex-col text-center" [formGroup]="reservationForm" (ngSubmit)="onSubmit()">
         <div class="formContainer flex">
             <select-pets [petsControl]="$any(reservationForm).get('pets')" [error]="getErrorMessage('pets')"></select-pets>
             <select-start-date [startDayControl]="$any(reservationForm).get('startDay')"
@@ -15,6 +15,9 @@
                 [endDayTimeError]="getErrorMessage('endDayTime')"
                 [minDate]="minEndDate"></select-end-date>
         </div>
+        @if (getErrorMessage("")) {  
+            <small class="text-error">{{ getErrorMessage("") }}</small>
+        }
         <button type="submit" class="btn btn-primary w-fit mx-auto my-auto" [disabled]="reservationForm.invalid">
             Réserver
         </button>
