@@ -7,6 +7,7 @@ import {
   of,
   startWith,
   switchMap,
+  tap,
 } from 'rxjs';
 import { ReservationsService } from '../../services/reservations.service';
 
@@ -33,6 +34,7 @@ export class SelectStartDateComponent implements OnInit {
       ),
       this.petsControl.valueChanges.pipe(startWith(this.petsControl.value)),
     ]).pipe(
+      tap(() => this.startDayTimeControl.setValue('')),
       switchMap(() => this.getArrivalTimes()),
       catchError((error) => {
         console.error(error);
