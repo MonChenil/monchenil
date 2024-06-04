@@ -38,13 +38,12 @@ public class ReservationTimes : IReservationTimes
 
         for (var currentTime = GetFirstTime(startDate); currentTime < endDate; currentTime = GetNextTime(currentTime))
         {
-            bool maxCapacityReached = MaxCapacityReached(currentTime, pets);
-            if (maxCapacityReached && breakOnMaxCapacity)
+            if (MaxCapacityReached(currentTime, pets) && breakOnMaxCapacity)
             {
                 break;
             }
 
-            if (maxCapacityReached || !IsOpenAt(currentTime) || AnyReservationAtTime(currentTime, reservations) || !ArePetsAvailable(currentTime, currentTime.AddMinutes(INTERVAL_MINUTES), pets))
+            if (!IsTimeAvailable(pets, reservations, currentTime))
             {
                 continue;
             }
@@ -53,6 +52,14 @@ public class ReservationTimes : IReservationTimes
         }
 
         return times;
+    }
+
+    private bool IsTimeAvailable(IEnumerable<Pet> pets, IEnumerable<Reservation> reservations, DateTime currentTime)
+    {
+        return !MaxCapacityReached(currentTime, pets) 
+            && IsOpenAt(currentTime) 
+            && !AnyReservationAtTime(currentTime, reservations) 
+            && ArePetsAvailable(currentTime, currentTime.AddMinutes(INTERVAL_MINUTES), pets);
     }
 
     private static DateTime GetTimeWithoutSeconds(DateTime time)
