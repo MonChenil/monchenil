@@ -1,8 +1,7 @@
 import { formatDate } from '@angular/common';
-import { Component, EventEmitter, Output } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReservationsService } from '../services/reservations.service';
-import { Reservation } from '../models/reservation';
 import { BehaviorSubject, switchMap } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -18,11 +17,11 @@ export class ReservationsPageComponent {
   constructor(private formBuilder: FormBuilder, private reservationsService: ReservationsService) {
     ({ startDay: this.minStartDate, endDay: this.minEndDate } = this.initDates());
     this.reservationForm = this.formBuilder.group({
-      pets: [[]],
-      startDay: [formatDate(this.minStartDate, 'yyyy-MM-dd', 'en')],
-      startDayTime: [''],
-      endDay: [formatDate(this.minEndDate, 'yyyy-MM-dd', 'en')],
-      endDayTime: [''],
+      pets: [[], [Validators.required, Validators.minLength(1), Validators.maxLength(3)]],
+      startDay: [formatDate(this.minStartDate, 'yyyy-MM-dd', 'en'), Validators.required],
+      startDayTime: ['', Validators.required],
+      endDay: [formatDate(this.minEndDate, 'yyyy-MM-dd', 'en'), Validators.required],
+      endDayTime: ['', Validators.required],
     });
 
     this.reservationForm.get('startDay')!.valueChanges.subscribe((value) => {
@@ -32,6 +31,28 @@ export class ReservationsPageComponent {
         .get('endDay')!
         .setValue(formatDate(this.minEndDate, 'yyyy-MM-dd', 'en'));
     });
+  }
+
+  public getErrorMessage(fieldName: string): string | null {
+    const field = fieldName ? this.reservationForm.get(fieldName) : this.reservationForm;
+
+    if (!field || !field!.errors || !field.touched || !field.dirty) {
+      return null;
+    }
+
+    if ((field.errors['required'] || field.errors['minlength']) && fieldName === 'pets') {
+      return 'Vous devez sélectionner au moins un animal';
+    }
+
+    if ((field.errors['required']) && fieldName !== 'pets') {
+      return 'Vous devez sélectionner une date et une heure';
+    }
+
+    if (field.errors['maxlength']) {
+      return 'Vous ne pouvez pas sélectionner plus de trois animaux';
+    }
+
+    return null;
   }
 
   refresh$ = new BehaviorSubject(null);
@@ -45,7 +66,12 @@ export class ReservationsPageComponent {
   }
 
   onSubmit() {
+    if (this.reservationForm.invalid) {
+      return;
+    }
+
     const reservationToAdd = this.prepareDataToSend();
+
     this.reservationsService.createReservation(reservationToAdd).subscribe({
       next: () => {
         this.onReset();

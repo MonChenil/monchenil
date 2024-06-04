@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import {
   Observable,
@@ -20,6 +20,8 @@ export class SelectEndDateComponent implements OnInit {
   @Input() declare endDayControl: FormControl;
   @Input() declare endDayTimeControl: FormControl;
   @Input() declare petsControl: FormControl;
+  @Input() declare endDayError: string | null;
+  @Input() declare endDayTimeError: string | null;
   @Input() declare minDate: Date;
 
   arrivalTimes$: Observable<string[]> = new Observable();
@@ -34,6 +36,11 @@ export class SelectEndDateComponent implements OnInit {
         return of([]);
       }),
     );
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    this.endDayControl.markAsDirty();
+    this.endDayControl.markAsTouched();
   }
 
   getDepartureTimes() {

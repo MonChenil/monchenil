@@ -13,8 +13,12 @@ export class ReservationHoursCardComponent {
   toggleArrivalTime() {
     if (this.hourControl.value === this.arrivalTime) {
       this.hourControl.setValue('');
+      this.hourControl.markAsDirty();
+      this.hourControl.markAsTouched();
     } else {
       this.hourControl.setValue(this.arrivalTime);
+      this.hourControl.markAsDirty();
+      this.hourControl.markAsTouched();
     }
   }
 

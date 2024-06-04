@@ -10,6 +10,7 @@ export class SelectPetsComponent {
   constructor(private petsService: PetsService) {}
 
   @Input() declare petsControl: FormControl;
+  @Input() declare error: string | null;
 
   pets$ = this.petsService.getCurrentUserPets();
 }

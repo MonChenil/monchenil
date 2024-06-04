@@ -3,4 +3,7 @@
     <div class="flex flex-col space-y-2">
         <reservation-pets-list [pets]="pets$ | async" [petsControl]="petsControl"></reservation-pets-list>
     </div>
+    @if (error) {
+    <small class="text-error mt-2">{{ error }}</small>
+    }
 </div>
