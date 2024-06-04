@@ -13,7 +13,8 @@
                 [petsControl]="$any(reservationForm).get('pets')"
                 [endDayError]="getErrorMessage('endDay')"
                 [endDayTimeError]="getErrorMessage('endDayTime')"
-                [minDate]="minEndDate"></select-end-date>
+                [minDate]="minEndDate"
+                [maxDate]="maxEndDate"></select-end-date>
         </div>
         @if (getErrorMessage("")) {  
             <small class="text-error">{{ getErrorMessage("") }}</small>

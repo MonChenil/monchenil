@@ -12,6 +12,7 @@ import { ReservationsService } from '../services/reservations.service';
 export class ReservationsPageComponent {
   minStartDate: Date;
   minEndDate: Date;
+  maxEndDate: Date = new Date();
   reservationForm: FormGroup;
 
   constructor(
@@ -40,11 +41,14 @@ export class ReservationsPageComponent {
     this.reservationForm.get('startDay')!.valueChanges.subscribe((value) => {
       this.minEndDate = new Date(value);
       this.minEndDate.setDate(this.minEndDate.getDate() + 1);
+      this.maxEndDate = new Date(this.minEndDate);
+      this.maxEndDate.setDate(this.maxEndDate.getDate() + 30);
       if (this.reservationForm.get('endDay')!.value <= value) {
         this.reservationForm
           .get('endDay')!
           .setValue(formatDate(this.minEndDate, 'yyyy-MM-dd', 'en'));
       }
+      this.reservationForm.get('endDay')!.updateValueAndValidity();
     });
   }
 
@@ -125,9 +129,14 @@ export class ReservationsPageComponent {
 
   initDates() {
     this.minStartDate = new Date();
+
     this.minEndDate = new Date();
     this.minEndDate.setDate(this.minStartDate.getDate() + 1);
     this.minEndDate.setHours(0, 0, 0, 0);
+
+    this.maxEndDate = new Date();
+    this.maxEndDate.setDate(this.minEndDate.getDate() + 30);
+
     return { startDay: this.minStartDate, endDay: this.minEndDate };
   }
 

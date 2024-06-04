@@ -25,6 +25,7 @@ export class SelectEndDateComponent implements OnInit {
   @Input() declare endDayError: string | null;
   @Input() declare endDayTimeError: string | null;
   @Input() declare minDate: Date;
+  @Input() declare maxDate: Date;
 
   arrivalTimes$: Observable<string[]> = new Observable();
 
@@ -57,7 +58,15 @@ export class SelectEndDateComponent implements OnInit {
     let dayOfMinDate = new Date(this.minDate);
     dayOfMinDate.setHours(0, 0, 0, 0);
 
+    let dayOfMaxDate = new Date(this.maxDate);
+    dayOfMaxDate.setHours(0, 0, 0, 0);
+
     if (startDate < dayOfMinDate) {
+      this.endDayControl.setErrors({ invalidDate: true });
+      return of([]);
+    }
+
+    if (startDate > dayOfMaxDate) {
       this.endDayControl.setErrors({ invalidDate: true });
       return of([]);
     }
@@ -82,7 +91,7 @@ export class SelectEndDateComponent implements OnInit {
     return (field.touched || field.dirty) &&
       field.errors &&
       field.errors['invalidDate']
-      ? `Cette date doit être postérieure ou égale au ${this.minDate.toLocaleDateString()}`
+      ? `Cette date doit être comprise entre le ${this.minDate.toLocaleDateString()} et le ${this.maxDate.toLocaleDateString()}`
       : null;
   }
 }
