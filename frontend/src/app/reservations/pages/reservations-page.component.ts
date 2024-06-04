@@ -1,7 +1,7 @@
 import { formatDate } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, switchMap } from 'rxjs';
 import { ReservationsService } from '../services/reservations.service';
 
@@ -12,6 +12,7 @@ import { ReservationsService } from '../services/reservations.service';
 export class ReservationsPageComponent {
   minStartDate: Date;
   minEndDate: Date;
+  maxEndDate: Date = new Date();
   reservationForm: FormGroup;
 
   constructor(
@@ -21,20 +22,65 @@ export class ReservationsPageComponent {
     ({ startDay: this.minStartDate, endDay: this.minEndDate } =
       this.initDates());
     this.reservationForm = this.formBuilder.group({
-      pets: [[]],
-      startDay: [formatDate(this.minStartDate, 'yyyy-MM-dd', 'en')],
-      startDayTime: [''],
-      endDay: [formatDate(this.minEndDate, 'yyyy-MM-dd', 'en')],
-      endDayTime: [''],
+      pets: [
+        [],
+        [Validators.required, Validators.minLength(1), Validators.maxLength(3)],
+      ],
+      startDay: [
+        formatDate(this.minStartDate, 'yyyy-MM-dd', 'en'),
+        Validators.required,
+      ],
+      startDayTime: ['', Validators.required],
+      endDay: [
+        formatDate(this.minEndDate, 'yyyy-MM-dd', 'en'),
+        Validators.required,
+      ],
+      endDayTime: ['', Validators.required],
     });
 
     this.reservationForm.get('startDay')!.valueChanges.subscribe((value) => {
       this.minEndDate = new Date(value);
       this.minEndDate.setDate(this.minEndDate.getDate() + 1);
-      this.reservationForm
-        .get('endDay')!
-        .setValue(formatDate(this.minEndDate, 'yyyy-MM-dd', 'en'));
+      this.maxEndDate = new Date(this.minEndDate);
+      this.maxEndDate.setDate(this.maxEndDate.getDate() + 30);
+      if (this.reservationForm.get('endDay')!.value <= value) {
+        this.reservationForm
+          .get('endDay')!
+          .setValue(formatDate(this.minEndDate, 'yyyy-MM-dd', 'en'));
+      }
+      this.reservationForm.get('endDay')!.updateValueAndValidity();
     });
+  }
+
+  public getErrorMessage(fieldName: string): string | null {
+    const field = fieldName
+      ? this.reservationForm.get(fieldName)
+      : this.reservationForm;
+
+    if (!field || !field!.errors || !field.touched || !field.dirty) {
+      return null;
+    }
+
+    if (
+      (field.errors['required'] || field.errors['minlength']) &&
+      fieldName === 'pets'
+    ) {
+      return 'Vous devez sélectionner au moins un animal';
+    }
+
+    if (field.errors['required'] && fieldName !== 'pets') {
+      return 'Vous devez sélectionner une date et une heure';
+    }
+
+    if (field.errors['maxlength']) {
+      return 'Vous ne pouvez pas sélectionner plus de trois animaux';
+    }
+
+    if (field.errors['httpError']) {
+      return field.errors['httpError'].error;
+    }
+
+    return null;
   }
 
   refresh$ = new BehaviorSubject(null);
@@ -52,14 +98,19 @@ export class ReservationsPageComponent {
   }
 
   onSubmit() {
+    if (this.reservationForm.invalid) {
+      return;
+    }
+
     const reservationToAdd = this.prepareDataToSend();
+
     this.reservationsService.createReservation(reservationToAdd).subscribe({
       next: () => {
         this.onReset();
         this.refresh();
       },
       error: (error: HttpErrorResponse) => {
-        this.reservationForm.setErrors({ httpError: error.error });
+        this.reservationForm.setErrors({ httpError: error });
       },
     });
   }
@@ -78,9 +129,14 @@ export class ReservationsPageComponent {
 
   initDates() {
     this.minStartDate = new Date();
+
     this.minEndDate = new Date();
     this.minEndDate.setDate(this.minStartDate.getDate() + 1);
     this.minEndDate.setHours(0, 0, 0, 0);
+
+    this.maxEndDate = new Date();
+    this.maxEndDate.setDate(this.minEndDate.getDate() + 30);
+
     return { startDay: this.minStartDate, endDay: this.minEndDate };
   }
 

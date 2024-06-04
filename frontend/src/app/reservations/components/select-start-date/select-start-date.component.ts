@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import {
   Observable,
@@ -7,6 +7,7 @@ import {
   of,
   startWith,
   switchMap,
+  tap,
 } from 'rxjs';
 import { ReservationsService } from '../../services/reservations.service';
 
@@ -20,6 +21,8 @@ export class SelectStartDateComponent implements OnInit {
   @Input() declare startDayControl: FormControl<string>;
   @Input() declare startDayTimeControl: FormControl<string>;
   @Input() declare petsControl: FormControl;
+  @Input() declare startDayError: string | null;
+  @Input() declare startDayTimeError: string | null;
   @Input() declare minDate: Date;
 
   arrivalTimes$: Observable<string[]> = new Observable();
@@ -31,12 +34,19 @@ export class SelectStartDateComponent implements OnInit {
       ),
       this.petsControl.valueChanges.pipe(startWith(this.petsControl.value)),
     ]).pipe(
+      tap(() => this.startDayTimeControl.setValue('')),
       switchMap(() => this.getArrivalTimes()),
       catchError((error) => {
         console.error(error);
         return of([]);
       }),
     );
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    this.startDayControl.updateValueAndValidity();
+    this.startDayControl.markAsDirty();
+    this.startDayControl.markAsTouched();
   }
 
   getArrivalTimes() {

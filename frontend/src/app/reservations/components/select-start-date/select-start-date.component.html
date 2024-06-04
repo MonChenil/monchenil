@@ -26,4 +26,7 @@
             [hourControl]="startDayTimeControl"
         ></reservation-hours-list>
     </div>
+    @if (startDayError || startDayTimeError) {
+    <small class="text-error my-2">{{ startDayError ? startDayError : startDayTimeError }}</small>
+    }
 </div>

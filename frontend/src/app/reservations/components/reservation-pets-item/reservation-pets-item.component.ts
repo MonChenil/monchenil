@@ -18,11 +18,18 @@ export class ReservationPetsItemComponent {
   togglePetSelection(petId: string) {
     const currentSelection = this.petsControl.value as string[];
     if (this.selected) {
+      if (currentSelection.length === 1) {
+        this.petsControl.markAsPristine();
+      }
       // Remove pet from selection
       this.petsControl.setValue(currentSelection.filter((id) => id !== petId));
+      this.petsControl.markAsDirty();
+      this.petsControl.markAsTouched();
     } else {
       // Add pet to selection
       this.petsControl.setValue([...currentSelection, petId]);
+      this.petsControl.markAsDirty();
+      this.petsControl.markAsTouched();
     }
   }
 }
