@@ -268,7 +268,7 @@ public class GetArrivalTimesTests
             new(2024, 1, 4, 12, 30, 0),
         ];
 
-        List<DateTime> arrivalTimes = _reservationTimes.GetArrivalTimes(startDate, endDate, [pets[2]]);
+        List<DateTime> arrivalTimes = _reservationTimes.GetArrivalTimes(startDate, endDate, [pets[3]]);
 
         Assert.Equal(expectedTimes, arrivalTimes);
     }

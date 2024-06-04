@@ -25,6 +25,12 @@ public class ReservationTimes : IReservationTimes
         return GetTimes(startDate, endDate, pets, true);
     }
 
+    private bool ArePetsAvailable(DateTime startDate, DateTime endDate, IEnumerable<Pet> pets)
+    {
+        var reservations = reservationsRepository.GetOverlappingReservations(startDate, endDate);
+        return !reservations.Any(reservation => reservation.Pets.Any(pets.Contains));
+    }
+
     private List<DateTime> GetTimes(DateTime startDate, DateTime endDate, IEnumerable<Pet> pets, bool breakOnMaxCapacity)
     {
         List<DateTime> times = [];
@@ -38,7 +44,7 @@ public class ReservationTimes : IReservationTimes
                 break;
             }
 
-            if (maxCapacityReached || !IsOpenAt(currentTime) || AnyReservationAtTime(currentTime, reservations))
+            if (maxCapacityReached || !IsOpenAt(currentTime) || AnyReservationAtTime(currentTime, reservations) || !ArePetsAvailable(currentTime, currentTime.AddMinutes(INTERVAL_MINUTES), pets))
             {
                 continue;
             }
