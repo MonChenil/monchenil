@@ -44,6 +44,7 @@ export class SelectStartDateComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    this.startDayControl.updateValueAndValidity();
     this.startDayControl.markAsDirty();
     this.startDayControl.markAsTouched();
   }
