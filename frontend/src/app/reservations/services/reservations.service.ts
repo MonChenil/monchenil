@@ -9,7 +9,7 @@ import { Reservation } from '../models/reservation';
 export class ReservationsService {
   constructor(private http: HttpClient) {}
 
-  getArrivalTimes(startDate: Date, endDate: Date) {
+  getArrivalTimes(startDate: Date, endDate: Date, petIdsAsString: string) {
     let formattedStartDate;
     let formattedEndDate;
 
@@ -27,6 +27,31 @@ export class ReservationsService {
         params: {
           StartDate: formattedStartDate,
           ...(endDate && { EndDate: formattedEndDate }),
+          ...(petIdsAsString && { PetIds: petIdsAsString }),
+        },
+      },
+    );
+  }
+
+  getDepartureTimes(startDate: Date, endDate: Date, petIdsAsString: string) {
+    let formattedStartDate;
+    let formattedEndDate;
+
+    try {
+      formattedStartDate = formatDate(startDate, 'yyyy-MM-ddTHH:mm:ss', 'en');
+      formattedEndDate = formatDate(endDate, 'yyyy-MM-ddTHH:mm:ss', 'en');
+    } catch (error) {
+      console.error(error);
+      return of([]);
+    }
+
+    return this.http.get<string[]>(
+      `${environment.backendReservations}/departure-times`,
+      {
+        params: {
+          StartDate: formattedStartDate,
+          ...(endDate && { EndDate: formattedEndDate }),
+          ...(petIdsAsString && { PetIds: petIdsAsString }),
         },
       },
     );
