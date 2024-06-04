@@ -60,6 +60,10 @@ public class ReservationsController : ControllerBase
         {
             return new BadRequestObjectResult(ex.Message);
         }
+        catch (ReservationDurationException ex)
+        {
+            return new BadRequestObjectResult(ex.Message);
+        }
     }
 
     [HttpDelete("{id:guid}")]

@@ -4,6 +4,7 @@ namespace MonChenil.Domain.Reservations;
 
 public class Reservation
 {
+    public const int MaxDurationInDays = 30;
     public ReservationId Id { get; }
     public string OwnerId { get; }
     public DateTime StartDate { get; }
@@ -15,6 +16,11 @@ public class Reservation
         if (endDate.Date <= startDate.Date)
         {
             throw new ReservationEndDateException();
+        }
+
+        if ((endDate - startDate).Days > MaxDurationInDays)
+        {
+            throw new ReservationDurationException();
         }
 
         Id = id;
