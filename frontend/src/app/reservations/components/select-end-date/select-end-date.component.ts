@@ -47,7 +47,6 @@ export class SelectEndDateComponent implements OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.endDayControl.updateValueAndValidity();
     this.endDayControl.markAsDirty();
     this.endDayControl.markAsTouched();
   }
