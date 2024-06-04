@@ -19,6 +19,7 @@ export class SelectStartDateComponent implements OnInit {
 
   @Input() declare startDayControl: FormControl<string>;
   @Input() declare startDayTimeControl: FormControl<string>;
+  @Input() declare petsControl: FormControl;
   @Input() declare minDate: Date;
 
   arrivalTimes$: Observable<string[]> = new Observable();

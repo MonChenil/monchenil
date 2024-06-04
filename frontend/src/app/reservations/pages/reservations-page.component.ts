@@ -1,6 +1,10 @@
 import { formatDate } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { ReservationsService } from '../services/reservations.service';
+import { Reservation } from '../models/reservation';
+import { BehaviorSubject, switchMap } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-reservations-page',
@@ -9,15 +13,10 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 export class ReservationsPageComponent {
   minStartDate: Date;
   minEndDate: Date;
-
   reservationForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder) {
-    this.minStartDate = new Date();
-    this.minEndDate = new Date();
-    this.minEndDate.setDate(this.minStartDate.getDate() + 1);
-    this.minEndDate.setHours(0, 0, 0, 0);
-
+  constructor(private formBuilder: FormBuilder, private reservationsService: ReservationsService) {
+    ({ startDay: this.minStartDate, endDay: this.minEndDate } = this.initDates());
     this.reservationForm = this.formBuilder.group({
       pets: [[]],
       startDay: [formatDate(this.minStartDate, 'yyyy-MM-dd', 'en')],
@@ -35,7 +34,63 @@ export class ReservationsPageComponent {
     });
   }
 
+  refresh$ = new BehaviorSubject(null);
+  reservations$ = this.refresh$.pipe(
+    switchMap(() => this.reservationsService.getReservations()),
+  );
+
+  refresh() {
+    console.log('refresh')
+    this.refresh$.next(null);
+  }
+
   onSubmit() {
-    console.log(this.reservationForm.value);
+    const reservationToAdd = this.prepareDataToSend();
+    this.reservationsService.createReservation(reservationToAdd).subscribe({
+      next: () => {
+        this.onReset();
+        this.refresh();
+      },
+      error: (error: HttpErrorResponse) => {
+        this.reservationForm.setErrors({ httpError: error.error });
+      },
+    });
+  }
+
+  onReset() {
+    ({ startDay: this.minStartDate, endDay: this.minEndDate } = this.initDates());
+    this.reservationForm.reset({
+      pets: [],
+      startDay: formatDate(this.minStartDate, 'yyyy-MM-dd', 'en'),
+      startDayTime: '',
+      endDay: formatDate(this.minEndDate, 'yyyy-MM-dd', 'en'),
+      endDayTime: ''
+    });
+  }
+
+  initDates() {
+    this.minStartDate = new Date();
+    this.minEndDate = new Date();
+    this.minEndDate.setDate(this.minStartDate.getDate() + 1);
+    this.minEndDate.setHours(0, 0, 0, 0);
+    return {'startDay': this.minStartDate, 'endDay': this.minEndDate};
+  }
+
+  prepareDataToSend() {
+    const reservation = {
+      petIds: [] as { value: string }[],
+      startDate: '',
+      endDate: '',
+    };
+    reservation.startDate = this.getDateTime(this.reservationForm.get('startDay')!.value, this.reservationForm.get('startDayTime')!.value);
+    reservation.endDate = this.getDateTime(this.reservationForm.get('endDay')!.value, this.reservationForm.get('endDayTime')!.value);
+    for (const pet of this.reservationForm.get('pets')!.value) {
+      reservation.petIds.push({ value: pet});
+    }
+    return reservation;
+  }
+
+  getDateTime(date: string, time: string): string {
+    return date + 'T' + time + ':00';
   }
 }

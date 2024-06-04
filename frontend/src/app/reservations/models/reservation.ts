@@ -1,7 +1,9 @@
 import { Pet } from '../../pets/models/pet';
 
 export type Reservation = {
-  id: string;
+  id: {
+    value: string;
+  }
   ownerId: string;
   startDate: string;
   endDate: string;

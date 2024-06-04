@@ -1,0 +1,5 @@
+<div class="flex h-96 flex-col gap-4 overflow-y-auto pr-4 mt-4">
+    @for (reservation of reservations; track reservation.id) {
+    <reservations-card [reservation]="reservation" (reservationDeleted)="reservationDeleted.emit($event)"></reservations-card>
+    }
+</div>
