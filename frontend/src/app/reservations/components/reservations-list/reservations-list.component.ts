@@ -8,4 +8,17 @@ import { Reservation } from '../../models/reservation';
 export class ReservationsListComponent {
   @Input() declare reservations: Reservation[] | null;
   @Output() reservationDeleted = new EventEmitter();
+
+  ngOnChanges() {
+    this.reservations = this.sortReservationsByDate(this.reservations);
+  }
+
+  sortReservationsByDate(reservations: Reservation[] | null): Reservation[] | null {
+    if (reservations) {
+      return reservations.sort((a, b) => {
+          return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+      });
+    }
+    return null;
+  }
 }
