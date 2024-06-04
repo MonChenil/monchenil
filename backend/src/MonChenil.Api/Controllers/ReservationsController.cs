@@ -43,23 +43,23 @@ public class ReservationsController : ControllerBase
     [Authorize]
     public IActionResult CreateReservation(CreateReservationRequest request)
     {
-        string currentUserId = GetCurrentUserId();
-        var reservationId = new ReservationId(Guid.NewGuid());
-        Reservation reservation;
+        var pets = petsRepository.GetPetsByIds(request.PetIds);
+        if (!reservationTimes.AreTimesAvailableForPets(request.StartDate, request.EndDate, pets))
+        {
+            return new BadRequestObjectResult($"The selected times are not available for the selected pets.");
+        }
         try
         {
-            reservation = new Reservation(reservationId, currentUserId, request.StartDate, request.EndDate);
+            string currentUserId = GetCurrentUserId();
+            var reservation = new Reservation(new(Guid.NewGuid()), currentUserId, request.StartDate, request.EndDate);
+            reservation.AddPets(pets);
+            reservationsRepository.AddReservation(reservation);
+            return Ok();
         }
         catch (ReservationEndDateException ex)
         {
             return new BadRequestObjectResult(ex.Message);
         }
-
-        var pets = petsRepository.GetPetsByIds(request.PetIds);
-        reservation.AddPets(pets);
-
-        reservationsRepository.AddReservation(reservation);
-        return Ok();
     }
 
     [HttpDelete("{id:guid}")]

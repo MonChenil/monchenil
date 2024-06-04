@@ -24,9 +24,10 @@ namespace MonChenil.Api.Tests.IntegrationTests
             var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
             EnsureTestUserCreated(context, userManager);
             EnsureTestPetCreated(context);
+            EnsureTestReservationsDeleted(context);
         }
 
-        private void EnsureTestPetCreated(ApplicationDbContext context)
+        private static void EnsureTestPetCreated(ApplicationDbContext context)
         {
             var testUser = context.Users.Where(u => u.Email == TEST_USER_EMAIL).FirstOrDefault();
             Assert.NotNull(testUser);
@@ -64,6 +65,12 @@ namespace MonChenil.Api.Tests.IntegrationTests
             userManager.CreateAsync(applicationUser, RESERVATION_TEST_USER_PASSWORD).Wait();
         }
 
+        private static void EnsureTestReservationsDeleted(ApplicationDbContext context)
+        {
+            context.Reservations.RemoveRange(context.Reservations);
+            context.SaveChanges();
+        }
+
         [Fact]
         public async Task ReservationPage_Displayed_WhenUserIsAuthenticated()
         {
@@ -88,8 +95,8 @@ namespace MonChenil.Api.Tests.IntegrationTests
             await EnsureAuthenticated();
 
             var newReservationRequest = new CreateReservationRequest(
-                StartDate: DateTime.Now.AddDays(1),
-                EndDate: DateTime.Now.AddDays(2),
+                StartDate: DateTime.Now.Date.AddDays(1).AddHours(9).AddMinutes(30),
+                EndDate: DateTime.Now.Date.AddDays(2).AddHours(9).AddMinutes(30),
                 PetIds: [new PetId("123456789012345")]
             );
 
