@@ -6,4 +6,27 @@
             [selected]="isSelected(pet.id.value)"
         ></reservation-pets-item>
     }
+    <div class="flex flex-row justify-between gap-4 p-1">
+        <a
+            [routerLink]="['/pets']"
+            type="button"
+            class="btn btn-circle btn-lg bg-base-100"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="size-6"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 4.5v15m7.5-7.5h-15"
+                />
+            </svg>
+        </a>
+        <h2 class="card-title grow justify-items-start">Ajouter un animal</h2>
+    </div>
 </div>
