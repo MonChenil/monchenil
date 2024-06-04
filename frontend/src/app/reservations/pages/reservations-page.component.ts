@@ -40,9 +40,11 @@ export class ReservationsPageComponent {
     this.reservationForm.get('startDay')!.valueChanges.subscribe((value) => {
       this.minEndDate = new Date(value);
       this.minEndDate.setDate(this.minEndDate.getDate() + 1);
-      this.reservationForm
-        .get('endDay')!
-        .setValue(formatDate(this.minEndDate, 'yyyy-MM-dd', 'en'));
+      if (this.reservationForm.get('endDay')!.value <= value) {
+        this.reservationForm
+          .get('endDay')!
+          .setValue(formatDate(this.minEndDate, 'yyyy-MM-dd', 'en'));
+      }
     });
   }
 
