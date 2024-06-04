@@ -19,6 +19,7 @@ export class SelectEndDateComponent implements OnInit {
 
   @Input() declare endDayControl: FormControl;
   @Input() declare endDayTimeControl: FormControl;
+  @Input() declare petsControl: FormControl;
   @Input() declare minDate: Date;
 
   arrivalTimes$: Observable<string[]> = new Observable();
@@ -27,7 +28,7 @@ export class SelectEndDateComponent implements OnInit {
     this.arrivalTimes$ = this.endDayControl.valueChanges.pipe(
       startWith(this.endDayControl.value),
       debounceTime(200),
-      switchMap(() => this.getArrivalTimes()),
+      switchMap(() => this.getDepartureTimes()),
       catchError((error) => {
         console.error(error);
         return of([]);
@@ -35,7 +36,7 @@ export class SelectEndDateComponent implements OnInit {
     );
   }
 
-  getArrivalTimes() {
+  getDepartureTimes() {
     let startDate = new Date(this.endDayControl.value);
     startDate.setHours(0, 0, 0, 0);
 
@@ -55,7 +56,7 @@ export class SelectEndDateComponent implements OnInit {
     endDate.setDate(endDate.getDate() + 1);
     endDate.setHours(0, 0, 0, 0);
 
-    return this.reservationsService.getArrivalTimes(startDate, endDate);
+    return this.reservationsService.getDepartureTimes(startDate, endDate, this.petsControl.value);
   }
 
   getErrorMessage(): string | null {

@@ -56,7 +56,7 @@ export class SelectStartDateComponent implements OnInit {
     endDate.setDate(endDate.getDate() + 1);
     endDate.setHours(0, 0, 0, 0);
 
-    return this.reservationsService.getArrivalTimes(startDate, endDate);
+    return this.reservationsService.getArrivalTimes(startDate, endDate, this.petsControl.value);
   }
 
   getErrorMessage(): string | null {
